@@ -1,4 +1,4 @@
 SN4J
 ====
 
-Social Network for Java
+Social Network Library for Java and Android

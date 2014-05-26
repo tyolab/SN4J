@@ -24,6 +24,8 @@ public interface SocialNetwork {
 	
 	public static final int INDEX_GMAIL = 5;
 	
+	public static final String ANY_STR = "any";
+	
 	public static final String TWITTER_STR = "twitter";
 	
 	public static final String FACEBOOK_STR = "facebook";

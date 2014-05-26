@@ -20,7 +20,7 @@ public class Secret {
 	
 	public Secret(String token, String secret) {
 		this.setToken(token);
-		this.setSecret(secret);
+		this.setSecret(secret);		
 	}
 
 	public Secret(int type, String token, String secret) {
@@ -52,5 +52,7 @@ public class Secret {
 		this.type = type;
 	}
 
-	
+	public String getTypeString() {
+		return SocialNetwork.SOCIAL_NETWORK[type];
+	}
 }

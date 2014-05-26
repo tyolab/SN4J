@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import au.com.tyo.sn.Secret;
+import au.com.tyo.sn.SocialNetwork;
 
 public class StoredSecret extends Secret {
 
@@ -13,17 +14,27 @@ public class StoredSecret extends Secret {
 	
 	private Context context;
 	
-	public StoredSecret(String token, String secret) {
-		super(token, secret);
-	}
+	private String prefTokenStr;
+	
+	private String prefSecretStr;
 	
 	public StoredSecret(Context context) {
+		this(context, SocialNetwork.ANY);
+	}
+	
+	public StoredSecret(Context context, int type) {
+		super(type);
+		
 		this.context = context;
 		
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 		
-		this.setToken(prefs.getString(PREF_STORED_SECRET_TOKEN, ""));
-		this.setSecret(prefs.getString(PREF_STORED_SECRET_SECRET, ""));
+		prefTokenStr = PREF_STORED_SECRET_TOKEN +"_" + this.getTypeString();
+		
+		prefSecretStr = PREF_STORED_SECRET_SECRET +"_" + this.getTypeString();
+		
+		this.setToken(prefs.getString(prefTokenStr, ""));
+		this.setSecret(prefs.getString(prefSecretStr, ""));
 	}
 
 	public void save() {
@@ -31,9 +42,9 @@ public class StoredSecret extends Secret {
 		
 		SharedPreferences.Editor editor = prefs.edit();
 		
-		editor.putString(PREF_STORED_SECRET_TOKEN, getToken());
+		editor.putString(prefTokenStr, getToken());
 		
-		editor.putString(PREF_STORED_SECRET_SECRET, getSecret());
+		editor.putString(prefSecretStr , getSecret());
 		
 		editor.commit();
 	}

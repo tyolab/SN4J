@@ -1,5 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <resources>
-
     <string name="app_name">SN4J</string>
-
+    
+    <string name="share">Share</string>
+    
+    <string name="share_via">Share via</string>
 </resources>

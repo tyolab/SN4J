@@ -14,16 +14,19 @@
  * limitations under the License.
  */
 
-package au.com.tyo.sn.android.twitter;
+package au.com.tyo.sn.android;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.webkit.WebView;
 import au.com.tyo.sn.R;
 
 public class AuthorizationActivity extends Activity {
 	
+	private static final String AUTHORIZATION_URL = "AUTHORIZATION_URL";
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -32,10 +35,20 @@ public class AuthorizationActivity extends Activity {
 		
 		WebView wv = (WebView) findViewById(R.id.wv_twitter_authorization);
 		
-		
+		Intent intent = this.getIntent();
+		Bundle extras = intent.getExtras();
+		if (extras != null) {
+			String url = intent.getStringExtra(AUTHORIZATION_URL);
+			
+			wv.loadUrl(url);
+		}
+		else
+			finish();
 	}
 	
-	public static void startTwitterAuthorizationActivity(Context context) {
-		
+	public static void startTwitterAuthorizationActivity(Context context, String authorizationUrl) {
+		Intent intent = new Intent(context, AuthorizationActivity.class);
+		intent.putExtra(AUTHORIZATION_URL, authorizationUrl);
+		context.startActivity(intent);
 	}
 }

@@ -23,7 +23,7 @@ import android.preference.PreferenceManager;
 import au.com.tyo.sn.Secret;
 import au.com.tyo.sn.SecretBase;
 import au.com.tyo.sn.SecretTwitter;
-import au.com.tyo.sn.SocialNetwork;
+import au.com.tyo.sn.SocialNetworkConstants;
 import au.com.tyo.sn.StoredSecrets;
 
 public class SecretsOnDroid extends StoredSecrets {
@@ -55,17 +55,17 @@ public class SecretsOnDroid extends StoredSecrets {
 				SecretOnDroid storedSecret = new SecretOnDroid(context);
 				Secret secret = null;
 				switch (type) {
-					case SocialNetwork.TWITTER:			
-						secret = new SecretTwitter(SocialNetwork.AUTHENTICATION_OAUTH_ACCESS_TOKEN);
+					case SocialNetworkConstants.TWITTER:			
+						secret = new SecretTwitter(SocialNetworkConstants.AUTHENTICATION_OAUTH_ACCESS_TOKEN);
 						storedSecret.load(secret);
 						break;
-					case SocialNetwork.FACEBOOK:					
-					case SocialNetwork.GOOGLE_PLUS:
-					case SocialNetwork.LINKED_IN:
+					case SocialNetworkConstants.FACEBOOK:					
+					case SocialNetworkConstants.GOOGLE_PLUS:
+					case SocialNetworkConstants.LINKED_IN:
 //						secret1 = new SecretBase(type, SocialNetwork.AUTHENTICATION_OAUTH_CONSUMER);
-						secret = new SecretBase(type, SocialNetwork.AUTHENTICATION_OAUTH_ACCESS_TOKEN);
+						secret = new SecretBase(type, SocialNetworkConstants.AUTHENTICATION_OAUTH_ACCESS_TOKEN);
 						break;	
-					case SocialNetwork.ANY:
+					case SocialNetworkConstants.ANY:
 					default:
 						secret = new SecretBase(type);
 						break;

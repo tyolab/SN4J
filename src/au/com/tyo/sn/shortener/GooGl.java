@@ -42,7 +42,7 @@ public class GooGl {
 //		return shortenedUrl;
 //	}
 	
-	public static String post(String url) {
+	private static String post(String url) {
 		HttpURLConnection httpcon = null;
 		
 		try {
@@ -111,7 +111,7 @@ public class GooGl {
 		return shortUrl;
 	}
 	
-	public static String parse(String jsonText) {
+	private static String parse(String jsonText) {
 		String url = null;
 		if (jsonText != null || jsonText.length() > 0) {
 			JSONObject array = null;

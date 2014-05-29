@@ -21,7 +21,7 @@ import android.content.Context;
 import android.content.res.Resources.NotFoundException;
 import au.com.tyo.sn.R;
 import au.com.tyo.sn.SecretTwitter;
-import au.com.tyo.sn.SocialNetwork;
+import au.com.tyo.sn.SocialNetworkConstants;
 import au.com.tyo.sn.twitter.Twitter;
 
 public class Twitter4Droid extends Twitter {
@@ -33,8 +33,8 @@ public class Twitter4Droid extends Twitter {
 		
 		this.context = context;
 		
-		secret = (SecretTwitter) SecretsOnDroid.getInstance().get(SocialNetwork.TWITTER, 
-																			SocialNetwork.AUTHENTICATION_OAUTH_ACCESS_TOKEN);
+		secret = (SecretTwitter) SecretsOnDroid.getInstance().get(SocialNetworkConstants.TWITTER, 
+																			SocialNetworkConstants.AUTHENTICATION_OAUTH_ACCESS_TOKEN);
 	}
 	
 	public void authenticate() throws NotFoundException, TwitterException {

@@ -21,7 +21,7 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import au.com.tyo.sn.Secret;
 import au.com.tyo.sn.SecretBase;
-import au.com.tyo.sn.SocialNetwork;
+import au.com.tyo.sn.SocialNetworkConstants;
 
 public class SecretOnDroid {
 

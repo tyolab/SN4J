@@ -1,0 +1,76 @@
+package au.com.tyo.sn.android;
+
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
+import au.com.tyo.sn.Secret;
+import au.com.tyo.sn.SecretBase;
+import au.com.tyo.sn.SocialNetwork;
+
+public class SecretOnDroid {
+
+	public static final String PREF_STORED_SECRET_TOKEN = "pref_sn4j_stored_secret_token";
+	
+	public static final String PREF_STORED_SECRET_SECRET = "pref_sn4j_stored_secret_secret";
+	
+//	public static final String PREF_STORED_SECRET_TYPE = "pref_sn4j_stored_secret_type";
+//	
+//	public static final String PREF_STORED_SECRET_AUTH_TYPE = "pref_sn4j_stored_secret_auth_type";
+	
+	private Context context;
+	
+	private String prefTokenStr;
+	
+	private String prefSecretStr;
+	
+//	private String prefTypeStr;
+//	
+//	private String prefAuthTypeStr;
+	
+	public SecretOnDroid(Context context) {
+		this.context = context;	
+	}
+	
+	public void setType(Secret secret) {
+		
+		String ext =  "_" + secret.buildKey();
+
+		prefTokenStr = PREF_STORED_SECRET_TOKEN + ext;
+		
+		prefSecretStr = PREF_STORED_SECRET_SECRET + ext;
+		
+//		prefTypeStr = PREF_STORED_SECRET_TYPE  + ext;
+//		
+//		prefAuthTypeStr = PREF_STORED_SECRET_AUTH_TYPE + ext;
+	}
+	
+	public void load(Secret secret) {
+		this.setType(secret);
+		
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+		
+		secret.setToken(prefs.getString(prefTokenStr, ""));
+		secret.setSecret(prefs.getString(prefSecretStr, ""));
+//		secret.setType(prefs.getInt(PREF_STORED_SECRET_TYPE, SocialNetwork.ANY));
+//		secret.setTypeAuth(prefs.getInt(PREF_STORED_SECRET_AUTH_TYPE, SocialNetwork.AUTHENTICATION_ANY));
+	}
+
+	public void save(Secret secret) {
+		this.setType(secret);
+		
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+		
+		SharedPreferences.Editor editor = prefs.edit();
+		
+		editor.putString(prefTokenStr, secret.getToken());
+		
+		editor.putString(prefSecretStr , secret.getSecret());
+		
+//		editor.putInt(prefTypeStr, secret.getType());
+//		
+//		editor.putInt(prefAuthTypeStr, secret.getTypeAuth());
+		
+		editor.commit();
+	}
+	
+}

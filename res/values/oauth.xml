@@ -5,8 +5,8 @@
     <string name="oauth_secret"></string>
     
     <!--  for Twitter -->
-    <string name="twitter_oauth_key"></string>
-    <string name="twitter_oauth_secret"></string>
+    <string name="oauth_key_twitter"></string>
+    <string name="oauth_secret_twitter"></string>
     
     
 </resources>

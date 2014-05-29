@@ -1,22 +1,28 @@
 package au.com.tyo.sn;
 
-import java.util.Map;
-
-import au.com.tyo.sn.android.StoredSecret;
-
-public abstract class StoredSecrets {
+public abstract class StoredSecrets extends Secrets {
 	
 	public static final String PREF_STORED_SECRET_TYPES = "pref_sn4j_stored_secret_types";
 	
 	protected int[] types;
 	
-	protected Map<Integer, StoredSecret> storedSecrets;
+	private static StoredSecrets instance;
 	
-	public StoredSecrets() {
-
+	public static void setInstance(StoredSecrets ins) {
+		instance = ins;
 	}
 	
-	public void loadSecrets() {
+	public static StoredSecrets getInstance() {
+		return instance;
+	}
+	
+	public StoredSecrets() {
+		super();
+		
+		types = null;
+	}
+	
+	public void load() {
 
 	}
 	
@@ -24,7 +30,7 @@ public abstract class StoredSecrets {
 
 	}
 	
-	private String typesToString() {
+	protected String typesToString() {
 		StringBuffer sb = new StringBuffer();
 		if (types.length > 0) {
 			sb.append(types[0]);

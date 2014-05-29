@@ -2,6 +2,10 @@ package au.com.tyo.sn.android;
 
 import android.content.Context;
 import au.com.tyo.sn.R;
+import au.com.tyo.sn.Secret;
+import au.com.tyo.sn.SecretTwitter;
+import au.com.tyo.sn.SocialNetwork;
+import au.com.tyo.sn.StoredSecrets;
 import au.com.tyo.sn.Twitter;
 
 public class Twitter4Droid extends Twitter {
@@ -9,13 +13,12 @@ public class Twitter4Droid extends Twitter {
 	private Context context;
 	
 	public Twitter4Droid(Context context) {
+		super();
+		
 		this.context = context;
-	}
-
-	@Override
-	protected void loadConsumerKey() {
-		this.setConsumerKey(context.getResources().getString(R.string.twitter_oauth_key));
-		this.setConsumerKeySecret(context.getResources().getString(R.string.twitter_oauth_secret));
+		
+		secret = (SecretTwitter) SecretsOnDroid.getInstance().get(SocialNetwork.TWITTER, 
+																			SocialNetwork.AUTHENTICATION_OAUTH_ACCESS_TOKEN);
 	}
 	
 	@Override

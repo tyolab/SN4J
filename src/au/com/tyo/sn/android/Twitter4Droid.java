@@ -33,6 +33,9 @@ public class Twitter4Droid extends Twitter {
 		
 		this.context = context;
 		
+		if (SecretsOnDroid.getInstance() == null)
+			SecretsOnDroid.setInstance(new SecretsOnDroid(context));
+		
 		secret = (SecretTwitter) SecretsOnDroid.getInstance().get(SocialNetworkConstants.TWITTER, 
 																			SocialNetworkConstants.AUTHENTICATION_OAUTH_ACCESS_TOKEN);
 	}

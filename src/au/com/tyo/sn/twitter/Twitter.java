@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import android.content.res.Resources.NotFoundException;
 import au.com.tyo.sn.SecretTwitter;
 import twitter4j.Status;
 import twitter4j.StatusUpdate;
@@ -41,8 +42,11 @@ public class Twitter {
 	
 	protected SecretTwitter secret;
 	
+	boolean authenticated;
+	
 	public Twitter() {
 		secret = null;
+		this.authenticated = false;
 	}
 	
 	public void authenticate(String consumerKey, String consumerKeySecret) throws TwitterException {
@@ -62,6 +66,7 @@ public class Twitter {
 
         OAuthAuthorization auth = new OAuthAuthorization(conf);
         twitter = new TwitterFactory().getInstance(auth); 
+        authenticated = true;
 	}
 
 	public void getAppAuthorized(String consumerKey, String consumerKeySecret) throws TwitterException {
@@ -73,7 +78,7 @@ public class Twitter {
 	}
 
 	protected void openAuthorizationURL(String authorizationURL) {
-		throw new UnsupportedOperationException("Override and implement this method (openAuthorizationURL) are needed");
+		throw new UnsupportedOperationException("Override and implement this method (openAuthorizationURL()) are needed");
 	}
 
 	public Status postTweet(String tweet) throws TwitterException {
@@ -105,6 +110,14 @@ public class Twitter {
 	
 	public boolean updateStatus(String status, String mediaUrl) {
 		return false;
+	}
+
+	public void authenticate() throws NotFoundException, TwitterException {
+		throw new UnsupportedOperationException("Override and implement this method (authenticate()) are needed");
+	}
+
+	public boolean isAuthenticated() {
+		return this.authenticated;
 	}
 
 }

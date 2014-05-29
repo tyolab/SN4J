@@ -17,11 +17,18 @@
 package au.com.tyo.sn;
 
 import twitter4j.TwitterException;
+import android.content.res.Resources.NotFoundException;
 import au.com.tyo.sn.twitter.Twitter;
 
 public class SocialNetwork {
 	
 	private Twitter twitter;
+	
+	private OnShareToSocialNetworkListener listener;
+	
+	public SocialNetwork() {
+		listener = null;
+	}
 
 	public Twitter getTwitter() {
 		return twitter;
@@ -31,8 +38,33 @@ public class SocialNetwork {
 		this.twitter = twitter;
 	}
 
-	public void share(int type, Message msg) throws TwitterException {
-		if ((type & SocialNetworkConstants.TWITTER) == SocialNetworkConstants.TWITTER)
-			twitter.postTweet(msg.getText());
+	public void share(final int type, final Message msg) {
+		new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				boolean successful = true;
+				if (twitter.isAuthenticated()) {
+					try {
+						twitter.authenticate();
+						
+						if (twitter.isAuthenticated()) {
+							if ((type & SocialNetworkConstants.TWITTER) == SocialNetworkConstants.TWITTER)
+								twitter.postTweet(msg.getText());
+						}
+						else
+							successful = false;
+						
+					} catch (NotFoundException | TwitterException e1) {
+						successful = false;
+					}			
+				}
+				
+				if (!successful)
+					listener.onOnShareToSocialNetworkError();
+			}
+			
+		}).run();
+
 	}
 }

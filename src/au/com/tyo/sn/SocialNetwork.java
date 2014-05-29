@@ -46,4 +46,9 @@ public interface SocialNetwork {
 																				EMAIL_STR,
 																				GMAIL_STR
 																				};
+	
+	public static final int AUTHENTICATION_ANY = -1;
+	public static final int AUTHENTICATION_PASSWORD = 0;
+	public static final int AUTHENTICATION_OAUTH_CONSUMER = 1;
+	public static final int AUTHENTICATION_OAUTH_ACCESS_TOKEN = 2;
 }

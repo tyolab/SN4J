@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--  for ANY -->
+    <string name="oauth_key"></string>
+    <string name="oauth_secret"></string>
+    
+    <!--  for Twitter -->
+    <string name="twitter_oauth_key"></string>
+    <string name="twitter_oauth_secret"></string>
+    
+    
+</resources>

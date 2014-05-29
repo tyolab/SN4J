@@ -16,12 +16,12 @@
 
 package au.com.tyo.sn.android;
 
+import twitter4j.TwitterException;
 import android.content.Context;
+import android.content.res.Resources.NotFoundException;
 import au.com.tyo.sn.R;
-import au.com.tyo.sn.Secret;
 import au.com.tyo.sn.SecretTwitter;
 import au.com.tyo.sn.SocialNetwork;
-import au.com.tyo.sn.StoredSecrets;
 import au.com.tyo.sn.twitter.Twitter;
 
 public class Twitter4Droid extends Twitter {
@@ -37,9 +37,13 @@ public class Twitter4Droid extends Twitter {
 																			SocialNetwork.AUTHENTICATION_OAUTH_ACCESS_TOKEN);
 	}
 	
+	public void authenticate() throws NotFoundException, TwitterException {
+		authenticate(context.getResources().getString(R.string.oauth_key_twitter), 
+				context.getResources().getString(R.string.oauth_secret_twitter));
+	}
+	
 	@Override
-	protected void loadAccessToken() {
-		this.setAccessToken(context.getResources().getString(R.string.twitter_access_token));
-		this.setAccessTokenSecret(context.getResources().getString(R.string.twitter_access_token_secret));
+	protected void openAuthorizationURL(String authorizationURL) {
+		
 	}
 }

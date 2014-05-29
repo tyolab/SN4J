@@ -27,6 +27,7 @@ import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
 import twitter4j.auth.AccessToken;
 import twitter4j.auth.OAuthAuthorization;
+import twitter4j.auth.RequestToken;
 import twitter4j.conf.Configuration;
 import twitter4j.conf.ConfigurationBuilder;
 
@@ -44,9 +45,9 @@ public class Twitter {
 		secret = null;
 	}
 	
-	public void authenticate(String consumerKey, String consumerKeySecret) {
+	public void authenticate(String consumerKey, String consumerKeySecret) throws TwitterException {
 		if (secret == null || secret.isBlank()) {
-			getAppAuthorized();
+			getAppAuthorized(consumerKey, consumerKeySecret);
 			return;
 		}
 		
@@ -63,8 +64,16 @@ public class Twitter {
         twitter = new TwitterFactory().getInstance(auth); 
 	}
 
-	public void getAppAuthorized() {
-		
+	public void getAppAuthorized(String consumerKey, String consumerKeySecret) throws TwitterException {
+		twitter = new TwitterFactory().getInstance();
+	    twitter.setOAuthConsumer(consumerKey, consumerKeySecret);
+	    RequestToken requestToken = twitter.getOAuthRequestToken();
+	    
+	    openAuthorizationURL(requestToken.getAuthorizationURL());
+	}
+
+	protected void openAuthorizationURL(String authorizationURL) {
+		throw new UnsupportedOperationException("Override and implement this method (openAuthorizationURL) are needed");
 	}
 
 	public Status postTweet(String tweet) throws TwitterException {
@@ -92,11 +101,6 @@ public class Twitter {
         }
   
         return twitter.updateStatus(what);
-	}
-	
-	public String getAuthorizationUrl() {
-		String url = null;
-		return url;
 	}
 	
 	public boolean updateStatus(String status, String mediaUrl) {

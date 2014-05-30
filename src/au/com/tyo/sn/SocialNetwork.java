@@ -37,6 +37,10 @@ public class SocialNetwork {
 	public void setTwitter(Twitter twitter) {
 		this.twitter = twitter;
 	}
+	
+	public void setOnShareToSocialNetworkListener(OnShareToSocialNetworkListener listener) {
+		this.listener = listener;
+	}
 
 	public void share(final int type, final Message msg) {
 		new Thread(new Runnable() {
@@ -44,23 +48,22 @@ public class SocialNetwork {
 			@Override
 			public void run() {
 				boolean successful = true;
-				if (twitter.isAuthenticated()) {
 					try {
-						twitter.authenticate();
-						
-						if (twitter.isAuthenticated()) {
-							if ((type & SocialNetworkConstants.TWITTER) == SocialNetworkConstants.TWITTER)
+						if ((type & SocialNetworkConstants.TWITTER) == SocialNetworkConstants.TWITTER) {
+							if (!twitter.isAuthenticated())
+								twitter.authenticate();
+							
+							if (twitter.isAuthenticated()) 
 								twitter.postTweet(msg.getText());
+							else
+								successful = false;
 						}
-						else
-							successful = false;
 						
 					} catch (NotFoundException | TwitterException e1) {
 						successful = false;
 					}			
-				}
 				
-				if (!successful)
+				if (!successful && listener != null)
 					listener.onOnShareToSocialNetworkError();
 			}
 			

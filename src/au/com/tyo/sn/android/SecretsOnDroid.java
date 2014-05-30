@@ -37,13 +37,20 @@ public class SecretsOnDroid extends StoredSecrets {
 		
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 		
-		String[] tokens = prefs.getString(PREF_STORED_SECRET_TYPES, "").split(",");
+		String value = prefs.getString(PREF_STORED_SECRET_TYPES, "");
 		
-		if (tokens != null && tokens.length > 0) {
-			types = new int[tokens.length];
-			int count = 0;
-			for (String token : tokens) 
-				types[count++] = Integer.valueOf(token);
+		if (value != null && value.trim().length() > 0) {
+			String[] tokens = value.split(",");
+			
+			if (tokens != null && tokens.length > 0) {
+				types = new int[tokens.length];
+				int count = 0;
+				for (String token : tokens) {
+					if (token.trim().length() == 0)
+						continue;
+					types[count++] = Integer.valueOf(token);
+				}
+			}
 		}
 		
 		load();

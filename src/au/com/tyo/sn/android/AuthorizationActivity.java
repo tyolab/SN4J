@@ -49,6 +49,7 @@ public class AuthorizationActivity extends Activity {
 	public static void startTwitterAuthorizationActivity(Context context, String authorizationUrl) {
 		Intent intent = new Intent(context, AuthorizationActivity.class);
 		intent.putExtra(AUTHORIZATION_URL, authorizationUrl);
+		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		context.startActivity(intent);
 	}
 }

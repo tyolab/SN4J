@@ -52,8 +52,6 @@ public class GooGl {
 			httpcon.setRequestProperty("Content-Type", "application/json");
 			httpcon.setRequestProperty("Accept", "application/json");
 			httpcon.setRequestMethod("POST");
-			httpcon.connect();
-			
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -68,7 +66,8 @@ public class GooGl {
         
 		try {
 			outputBytes = ("{'longUrl': \"" + url + "\"}").getBytes("UTF-8");
-			
+			httpcon.setRequestProperty("Content-Length", Integer.toString(outputBytes.length));
+			httpcon.connect();
 			os = httpcon.getOutputStream();
 			os.write(outputBytes);
 			is = httpcon.getInputStream();

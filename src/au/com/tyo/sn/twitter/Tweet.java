@@ -24,8 +24,21 @@ public class Tweet {
 	
 	protected StringBuffer buffer;
 	
+	protected int limit;
+	
 	public Tweet() {
 		buffer = new StringBuffer();
+		limit = CHARACTER_LIMIT;
+	}
+	
+	public void preOccupy(int howManyChars) {
+		limit -= howManyChars;
+		if (limit < 0)
+			limit = 0;
+	}
+	
+	public int getLimit() {
+		return limit;
 	}
 	
 	public void appendOrNot(String what) {
@@ -33,7 +46,7 @@ public class Tweet {
 	}
 	
 	public void appendOrNot(String what, String prefix) {
-		if (buffer.length() + what.length() <= 140)
+		if (buffer.length() + what.length() <= getLimit())
 			buffer.append(prefix + what);
 	}
 	
@@ -42,12 +55,8 @@ public class Tweet {
 	}
 	
 	public void insertOrNot(String what, String suffix) {
-		if (buffer.length() + what.length() <= 140)
+		if (buffer.length() + what.length() <= getLimit())
 			buffer.insert(0, what + suffix);
-	}
-	
-	public void createTweet() {
-		
 	}
 	
 	public void appendUrl(String url, boolean trimToFit) {
@@ -56,12 +65,12 @@ public class Tweet {
 	
 	public void appendUrl(String url, boolean trimToFit, int minLength) {
 		String tempUrl = url;
-		if (buffer.length() + tempUrl.length() > 140) 
-			tempUrl = GooGl.getShortenedUrl(tempUrl);
+//		if (buffer.length() + tempUrl.length() > getLimit()) 
+//			tempUrl = GooGl.getShortenedUrl(tempUrl);
 		
-		if (buffer.length() + tempUrl.length() > 140 && trimToFit) {
+		if (buffer.length() + tempUrl.length() > getLimit() && trimToFit) {
 			String endStr = " ... " + tempUrl;
-			int whereShouldBeTrim = 140 - endStr.length();
+			int whereShouldBeTrim = getLimit() - endStr.length();
 			
 			if (buffer.length() > whereShouldBeTrim && whereShouldBeTrim > 0) {
 				int i = buffer.length() - 1;

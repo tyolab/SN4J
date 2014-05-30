@@ -46,7 +46,7 @@ public class Twitter4Droid extends Twitter {
 	}
 	
 	@Override
-	protected void openAuthorizationURL(String authorizationURL) {
-		
+	protected void openAuthorizationURL(String authorizationUrl) {
+		AuthorizationActivity.startTwitterAuthorizationActivity(context, authorizationUrl);
 	}
 }

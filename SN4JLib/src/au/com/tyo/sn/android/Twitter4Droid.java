@@ -33,11 +33,12 @@ public class Twitter4Droid extends SNTwitter {
 		
 		this.context = context;
 		
-		if (SecretsOnDroid.getInstance() == null)
-			SecretsOnDroid.setInstance(new SecretsOnDroid(context));
+		if (SecretSafe.getInstance() == null)
+			SecretSafe.setInstance(new SecretSafe(context));
 		
-		secret = (SecretTwitter) SecretsOnDroid.getInstance().get(SocialNetworkConstants.TWITTER, 
-																			SocialNetworkConstants.AUTHENTICATION_OAUTH_ACCESS_TOKEN);
+		this.setSecretSafe(SecretSafe.getInstance());
+		
+		this.loadSecretsFromSafe();
 	}
 	
 	public void authenticate() throws NotFoundException, TwitterException {

@@ -55,16 +55,23 @@ public interface SocialNetworkConstants {
 	public static final String GMAIL_STR = "gmail";
 	
 	public static final String[] SOCIAL_NETWORK = {
-																				TWITTER_STR, 
-																				FACEBOOK_STR, 
-																				GOOGLE_PLUS_STR, 
-																				LINKED_IN_STR, 
-																				EMAIL_STR,
-																				GMAIL_STR
+																					TWITTER_STR, 
+																					FACEBOOK_STR, 
+																					GOOGLE_PLUS_STR, 
+																					LINKED_IN_STR, 
+																					EMAIL_STR,
+																					GMAIL_STR
 																				};
 	
 	public static final int AUTHENTICATION_ANY = -1;
 	public static final int AUTHENTICATION_PASSWORD = 0;
 	public static final int AUTHENTICATION_OAUTH_ID = 1;
 	public static final int AUTHENTICATION_OAUTH_ACCESS_TOKEN = 2;
+	
+	public static final int[] SUPPORTED_SOCIAL_NETWORKS = {
+																					TWITTER, 
+																					FACEBOOK, 
+																					GOOGLE_PLUS, 
+																					LINKED_IN
+																				};
 }

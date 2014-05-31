@@ -20,9 +20,19 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Secrets {
+public abstract class Secrets {
 	
 	private Map<String, Secret> secrets;
+	
+	private static Secrets instance;
+
+	public static void setInstance(Secrets ins) {
+		instance = ins;
+	}
+	
+	public static Secrets getInstance() {
+		return instance;
+	}
 
 	public Secrets() {
 		setSecrets(new HashMap<String, Secret>());
@@ -53,11 +63,10 @@ public class Secrets {
 		this.secrets = secrets;
 	}
 	
-	public void load() {
-
-	}
+	public abstract void load(Secret secret);
 	
-	public void save() {
+//	public abstract void save();
+	
+	public abstract void save(Secret secret);
 
-	}
 }

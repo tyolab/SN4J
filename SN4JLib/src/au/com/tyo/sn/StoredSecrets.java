@@ -22,28 +22,10 @@ public abstract class StoredSecrets extends Secrets {
 	
 	protected int[] types;
 	
-	private static StoredSecrets instance;
-	
-	public static void setInstance(StoredSecrets ins) {
-		instance = ins;
-	}
-	
-	public static StoredSecrets getInstance() {
-		return instance;
-	}
-	
 	public StoredSecrets() {
 		super();
 		
-		types = null;
-	}
-	
-	public void load() {
-
-	}
-	
-	public void save() {
-
+		types = SocialNetworkConstants.SUPPORTED_SOCIAL_NETWORKS;
 	}
 	
 	protected String typesToString() {

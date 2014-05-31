@@ -21,7 +21,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 import android.content.res.Resources.NotFoundException;
-import au.com.tyo.sn.R;
+import au.com.tyo.sn.SNBase;
 import au.com.tyo.sn.SecretTwitter;
 import au.com.tyo.sn.Secrets;
 import au.com.tyo.sn.SocialNetworkConstants;
@@ -37,7 +37,7 @@ import twitter4j.auth.RequestToken;
 import twitter4j.conf.Configuration;
 import twitter4j.conf.ConfigurationBuilder;
 
-public class SNTwitter {
+public class SNTwitter extends SNBase {
 	
 	public static final String REQUEST_TOKEN_URL = "https://api.twitter.com/oauth/request_token"; 
 	public static final String ACCESS_TOKEN_URL = "https://api.twitter.com/oauth/access_token";
@@ -53,14 +53,7 @@ public class SNTwitter {
 	
 	private Callback callback;
 	
-	private Secrets secrets;
-	
-	public SNTwitter(Secrets secrets) {
-		this.secrets = secrets;
-		
-		secretToken = (SecretTwitter) secrets.get(SocialNetworkConstants.TWITTER, SocialNetworkConstants.AUTHENTICATION_OAUTH_ACCESS_TOKEN);
-		secretId = (SecretTwitter) secrets.get(SocialNetworkConstants.TWITTER, SocialNetworkConstants.AUTHENTICATION_OAUTH_ID);
-		
+	public SNTwitter() {
 		this.authenticated = false;
 	}
 	
@@ -171,9 +164,30 @@ public class SNTwitter {
         AccessToken accessToken = t.getOAuthAccessToken(token, verifier);
         
         secretId = new SecretTwitter(SocialNetworkConstants.AUTHENTICATION_OAUTH_ID);
+        secretId.setToken(String.valueOf(accessToken.getUserId()));
+        
         secretToken = new SecretTwitter(SocialNetworkConstants.AUTHENTICATION_OAUTH_ACCESS_TOKEN);
+        secretToken.setToken(accessToken.getToken());
+        secretToken.setSecret(accessToken.getTokenSecret());
 
-		secrets
+		secrets.save(secretId);
 	}
+
+	@Override
+	public void loadSecretsFromSafe() {
+		if (secrets != null) {
+			secretToken = (SecretTwitter) secrets.get(SocialNetworkConstants.TWITTER, SocialNetworkConstants.AUTHENTICATION_OAUTH_ACCESS_TOKEN);
+			secretId = (SecretTwitter) secrets.get(SocialNetworkConstants.TWITTER, SocialNetworkConstants.AUTHENTICATION_OAUTH_ID);
+		}
+	}
+
+	@Override
+	public void saveSecretsToSafe() {
+		if (secretToken != null && secretId != null) {
+			secrets.save(secretToken);
+			secrets.save(secretId);
+		}
+	}
+	
 
 }

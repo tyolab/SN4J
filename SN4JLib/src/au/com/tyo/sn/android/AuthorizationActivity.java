@@ -16,6 +16,7 @@
 
 package au.com.tyo.sn.android;
 
+import twitter4j.TwitterException;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -55,7 +56,7 @@ public class AuthorizationActivity extends Activity {
 		context.startActivity(intent);
 	}
 	
-	public static void onResumeToMainActivity(Activity mainActivity, SNTwitter  twitter) {
+	public static void onResumeToMainActivity(Activity mainActivity, SNTwitter  twitter) throws TwitterException {
 		
 		  if (mainActivity.getIntent()!=null && mainActivity.getIntent().getData()!=null){
 		        Uri uri = mainActivity.getIntent().getData();

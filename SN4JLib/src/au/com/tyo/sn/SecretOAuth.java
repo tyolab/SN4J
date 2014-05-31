@@ -16,12 +16,28 @@
 
 package au.com.tyo.sn;
 
-public class SecretTwitter extends SecretBase {
+/*
+ * The secret for storing the access token and token secret
+ */
+public class SecretOAuth extends SecretBase {
+	
+	private SecretBase idSecret;  // for storing the user id;
 
-	public SecretTwitter(int authType) {
-		super(SocialNetworkConstants.TWITTER);
+	public SecretOAuth(int type) {
+		super(type);
 		
-		this.setTypeAuth(authType);
+		this.setTypeAuth(SocialNetworkConstants.AUTHENTICATION_OAUTH_ACCESS_TOKEN);
+		
+		setIdSecret(new SecretBase(type, SocialNetworkConstants.AUTHENTICATION_OAUTH_ID));
 	}
+
+	public SecretBase getIdSecret() {
+		return idSecret;
+	}
+
+	public void setIdSecret(SecretBase idSecret) {
+		this.idSecret = idSecret;
+	}
+	
 
 }

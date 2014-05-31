@@ -16,25 +16,29 @@
 
 package au.com.tyo.sn;
 
+import java.util.LinkedList;
+
 import twitter4j.TwitterException;
 import android.content.res.Resources.NotFoundException;
-import au.com.tyo.sn.twitter.Twitter;
+import au.com.tyo.sn.twitter.SNTwitter;
 
 public class SocialNetwork {
 	
-	private Twitter twitter;
+	private SNTwitter twitter;
 	
 	private OnShareToSocialNetworkListener listener;
+	
+	private LinkedList<Message> queue; 
 	
 	public SocialNetwork() {
 		listener = null;
 	}
 
-	public Twitter getTwitter() {
+	public SNTwitter getTwitter() {
 		return twitter;
 	}
 
-	public void setTwitter(Twitter twitter) {
+	public void setTwitter(SNTwitter twitter) {
 		this.twitter = twitter;
 	}
 	

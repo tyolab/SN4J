@@ -21,9 +21,14 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 import android.content.res.Resources.NotFoundException;
+import au.com.tyo.sn.R;
 import au.com.tyo.sn.SecretTwitter;
+import au.com.tyo.sn.Secrets;
+import au.com.tyo.sn.SocialNetworkConstants;
+import au.com.tyo.sn.android.Callback;
 import twitter4j.Status;
 import twitter4j.StatusUpdate;
+import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
 import twitter4j.auth.AccessToken;
@@ -32,30 +37,64 @@ import twitter4j.auth.RequestToken;
 import twitter4j.conf.Configuration;
 import twitter4j.conf.ConfigurationBuilder;
 
-public class Twitter {
+public class SNTwitter {
 	
 	public static final String REQUEST_TOKEN_URL = "https://api.twitter.com/oauth/request_token"; 
 	public static final String ACCESS_TOKEN_URL = "https://api.twitter.com/oauth/access_token";
 	public static final String AUTHORIZE_URL = "https://api.twitter.com/oauth/authorize";
 	
-	private twitter4j.Twitter twitter;
+	private Twitter twitter;
 	
-	protected SecretTwitter secret;
+	protected SecretTwitter secretId;
 	
-	boolean authenticated;
+	protected SecretTwitter secretToken;
 	
-	public Twitter() {
-		secret = null;
+	private boolean authenticated;
+	
+	private Callback callback;
+	
+	private Secrets secrets;
+	
+	public SNTwitter(Secrets secrets) {
+		this.secrets = secrets;
+		
+		secretToken = (SecretTwitter) secrets.get(SocialNetworkConstants.TWITTER, SocialNetworkConstants.AUTHENTICATION_OAUTH_ACCESS_TOKEN);
+		secretId = (SecretTwitter) secrets.get(SocialNetworkConstants.TWITTER, SocialNetworkConstants.AUTHENTICATION_OAUTH_ID);
+		
 		this.authenticated = false;
 	}
 	
+	public synchronized SecretTwitter getSecretId() {
+		return secretId;
+	}
+
+	public synchronized void setSecretId(SecretTwitter secretId) {
+		this.secretId = secretId;
+	}
+
+	public synchronized SecretTwitter getSecretToken() {
+		return secretToken;
+	}
+
+	public synchronized void setSecretToken(SecretTwitter secretToken) {
+		this.secretToken = secretToken;
+	}
+
+	public Callback getCallback() {
+		return callback;
+	}
+
+	public void setCallback(Callback callback) {
+		this.callback = callback;
+	}
+	
 	public void authenticate(String consumerKey, String consumerKeySecret) throws TwitterException {
-		if (secret == null || secret.isBlank()) {
+		if (secretToken == null || secretToken.isBlank()) {
 			getAppAuthorized(consumerKey, consumerKeySecret);
 			return;
 		}
 		
-		AccessToken accessToken = new AccessToken(secret.getToken(), secret.getSecret());
+		AccessToken accessToken = new AccessToken(secretToken.getToken(), secretToken.getSecret());
 		
         Configuration conf = new ConfigurationBuilder()
                 .setOAuthConsumerKey(consumerKey)
@@ -70,11 +109,17 @@ public class Twitter {
 	}
 
 	public void getAppAuthorized(String consumerKey, String consumerKeySecret) throws TwitterException {
-		twitter = new TwitterFactory().getInstance();
+		Twitter twitter = getTwitter();
 	    twitter.setOAuthConsumer(consumerKey, consumerKeySecret);
 	    RequestToken requestToken = twitter.getOAuthRequestToken();
 	    
 	    openAuthorizationURL(requestToken.getAuthorizationURL());
+	}
+
+	private Twitter getTwitter() {
+		if (twitter == null)
+			twitter = new TwitterFactory().getInstance();
+		return twitter;
 	}
 
 	protected void openAuthorizationURL(String authorizationURL) {
@@ -118,6 +163,17 @@ public class Twitter {
 
 	public boolean isAuthenticated() {
 		return this.authenticated;
+	}
+
+	public void processAccessToken(String token, String verifier) throws TwitterException {
+        Twitter t = this.getTwitter();
+
+        AccessToken accessToken = t.getOAuthAccessToken(token, verifier);
+        
+        secretId = new SecretTwitter(SocialNetworkConstants.AUTHENTICATION_OAUTH_ID);
+        secretToken = new SecretTwitter(SocialNetworkConstants.AUTHENTICATION_OAUTH_ACCESS_TOKEN);
+
+		secrets
 	}
 
 }

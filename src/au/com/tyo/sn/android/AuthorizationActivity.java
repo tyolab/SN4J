@@ -19,9 +19,11 @@ package au.com.tyo.sn.android;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.webkit.WebView;
 import au.com.tyo.sn.R;
+import au.com.tyo.sn.twitter.SNTwitter;
 
 public class AuthorizationActivity extends Activity {
 	
@@ -51,5 +53,20 @@ public class AuthorizationActivity extends Activity {
 		intent.putExtra(AUTHORIZATION_URL, authorizationUrl);
 		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		context.startActivity(intent);
+	}
+	
+	public static void onResumeToMainActivity(Activity mainActivity, SNTwitter  twitter) {
+		
+		  if (mainActivity.getIntent()!=null && mainActivity.getIntent().getData()!=null){
+		        Uri uri = mainActivity.getIntent().getData();
+
+		        //handle returning from authenticating the user
+		        if (uri != null && uri.toString().startsWith(twitter.getCallback().toString())) {
+		            String token = uri.getQueryParameter("oauth_token");
+		            String verifier = uri.getQueryParameter("oauth_verifier");
+
+		            twitter.processAccessToken(token, verifier);
+		        }
+		    }    
 	}
 }

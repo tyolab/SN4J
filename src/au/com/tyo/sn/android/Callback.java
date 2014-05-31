@@ -20,13 +20,32 @@ import android.net.Uri;
 
 public class Callback {
 	
+	public static final String CALLBACK_DEFAULT_SCHEME = "callback";
+	
+	public static final String CALLBACK_DEFAULT_HOST = "sn4j";
+	
 	private String scheme;
 	
 	private String host;
 	
+	private static Callback callback;
+	
+	static {
+		callback = new Callback();
+	}
+	
+	public Callback() {
+		this.scheme = CALLBACK_DEFAULT_SCHEME;
+		this.host = CALLBACK_DEFAULT_HOST;
+	}
+	
 	public Callback(String scheme, String host) {
 		this.scheme = scheme;
 		this.host = host;
+	}
+	
+	public static Callback getDefaultCallback() {
+		return callback;
 	}
 
 	public Uri toUri() {

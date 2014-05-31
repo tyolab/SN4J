@@ -52,4 +52,12 @@ public class Secrets {
 	public void setSecrets(Map<String, Secret> secrets) {
 		this.secrets = secrets;
 	}
+	
+	public void load() {
+
+	}
+	
+	public void save() {
+
+	}
 }

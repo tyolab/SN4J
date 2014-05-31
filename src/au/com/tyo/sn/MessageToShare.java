@@ -24,6 +24,8 @@ public class MessageToShare implements Message {
 	
 	private String url;
 	
+	private int snToShare; // social network to share to
+	
 	public MessageToShare(String title, String text) {
 		this.title = title;
 		this.text = text;
@@ -45,6 +47,14 @@ public class MessageToShare implements Message {
 
 	public void setUrl(String url) {
 		this.url = url;
+	}
+
+	public int getSocialNetworkToShare() {
+		return snToShare;
+	}
+
+	public void setSocialNetworkToShare(int snToShare) {
+		this.snToShare = snToShare;
 	}
 
 }

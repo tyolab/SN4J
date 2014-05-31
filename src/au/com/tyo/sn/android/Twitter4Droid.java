@@ -22,9 +22,9 @@ import android.content.res.Resources.NotFoundException;
 import au.com.tyo.sn.R;
 import au.com.tyo.sn.SecretTwitter;
 import au.com.tyo.sn.SocialNetworkConstants;
-import au.com.tyo.sn.twitter.Twitter;
+import au.com.tyo.sn.twitter.SNTwitter;
 
-public class Twitter4Droid extends Twitter {
+public class Twitter4Droid extends SNTwitter {
 	
 	private Context context;
 	

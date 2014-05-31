@@ -1,11 +1,15 @@
 package com.example.secretsondroid;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import au.com.tyo.sn.SecretOAuth;
+import au.com.tyo.sn.SocialNetworkConstants;
+import au.com.tyo.sn.android.SecretSafe;
 
 import com.example.secretsondroid.dummy.DummyContent;
 
@@ -15,6 +19,11 @@ import com.example.secretsondroid.dummy.DummyContent;
  * {@link ItemDetailActivity} on handsets.
  */
 public class ItemDetailFragment extends Fragment {
+	
+	private SecretSafe safe;
+	
+	SecretOAuth secret;
+	
 	/**
 	 * The fragment argument representing the item ID that this fragment
 	 * represents.
@@ -31,11 +40,18 @@ public class ItemDetailFragment extends Fragment {
 	 * fragment (e.g. upon screen orientation changes).
 	 */
 	public ItemDetailFragment() {
+
 	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		Context context = this.getActivity();
+		safe = new SecretSafe(context);
+		secret = new SecretOAuth(SocialNetworkConstants.TWITTER);
+		safe.load(secret.getToken());
+		safe.load(secret.getId());
 
 		if (getArguments().containsKey(ARG_ITEM_ID)) {
 			// Load the dummy content specified by the fragment
@@ -56,6 +72,24 @@ public class ItemDetailFragment extends Fragment {
 		if (mItem != null) {
 			((TextView) rootView.findViewById(R.id.item_detail))
 					.setText(mItem.content);
+			
+			((TextView) rootView.findViewById(R.id.textView2))
+			.setText(secret.getId().getToken());
+			
+			((TextView) rootView.findViewById(R.id.textView4))
+			.setText(secret.getToken().getToken());
+			
+			((TextView) rootView.findViewById(R.id.textView6))
+			.setText(secret.getToken().getSecret());
+		}
+		
+		if (secret.getToken().getToken().length() == 0) {
+			secret.getId().setToken("123456789");
+			secret.getToken().setToken("123456789Here is the token");
+			secret.getToken().setSecret("%%%%%%%%S$$$$$$$$$$Donttellanyone%%%%%&&SFDS^FSD");
+			
+			safe.save(secret.getToken());
+			safe.save(secret.getId());
 		}
 
 		return rootView;

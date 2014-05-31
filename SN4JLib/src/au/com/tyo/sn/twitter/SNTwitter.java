@@ -45,7 +45,7 @@ public class SNTwitter extends SNBase {
 	
 	private Twitter twitter;
 
-	protected SecretOAuth secretToken;
+	protected SecretOAuth secretOAuth;
 	
 	private boolean authenticated;
 	
@@ -54,7 +54,7 @@ public class SNTwitter extends SNBase {
 	public SNTwitter() {
 		this.authenticated = false;
 		
-		secretToken = new SecretOAuth(SocialNetworkConstants.TWITTER);
+		secretOAuth = new SecretOAuth(SocialNetworkConstants.TWITTER);
 	}
 	
 //	public synchronized SecretOAuth getSecretId() {
@@ -66,11 +66,11 @@ public class SNTwitter extends SNBase {
 //	}
 
 	public synchronized SecretOAuth getSecretToken() {
-		return secretToken;
+		return secretOAuth;
 	}
 
 	public synchronized void setSecretToken(SecretOAuth secretToken) {
-		this.secretToken = secretToken;
+		this.secretOAuth = secretToken;
 	}
 
 	public Callback getCallback() {
@@ -82,12 +82,13 @@ public class SNTwitter extends SNBase {
 	}
 	
 	public void authenticate(String consumerKey, String consumerKeySecret) throws TwitterException {
-		if (secretToken == null || secretToken.isBlank()) {
+		if (secretOAuth.isBlank()) {
 			getAppAuthorized(consumerKey, consumerKeySecret);
 			return;
 		}
 		
-		AccessToken accessToken = new AccessToken(secretToken.getToken(), secretToken.getSecret());
+		AccessToken accessToken = new AccessToken(secretOAuth.getToken().getToken(), 
+				secretOAuth.getToken().getSecret());
 		
         Configuration conf = new ConfigurationBuilder()
                 .setOAuthConsumerKey(consumerKey)
@@ -163,28 +164,28 @@ public class SNTwitter extends SNBase {
 
         AccessToken accessToken = t.getOAuthAccessToken(token, verifier);
         
-        secretToken.getIdSecret().setToken(String.valueOf(accessToken.getUserId()));
+        secretOAuth.getId().setToken(String.valueOf(accessToken.getUserId()));
         
-        secretToken.setToken(accessToken.getToken());
-        secretToken.setSecret(accessToken.getTokenSecret());
+        secretOAuth.getToken().setToken(accessToken.getToken());
+        secretOAuth.getToken().setSecret(accessToken.getTokenSecret());
 
-		secrets.save(secretToken.getIdSecret());
-		secrets.save(secretToken);
+		secrets.save(secretOAuth.getId());
+		secrets.save(secretOAuth.getToken());
 	}
 
 	@Override
 	public void loadSecretsFromSafe() {
 		if (secrets != null) {
-			secrets.load(secretToken.getIdSecret());
-			secrets.load(secretToken);
+			secrets.load(secretOAuth.getId());
+			secrets.load(secretOAuth.getToken());
 		}
 	}
 
 	@Override
 	public void saveSecretsToSafe() {
-		if (secretToken != null) {
-			secrets.save(secretToken);
-			secrets.save(secretToken.getIdSecret());
+		if (secretOAuth != null) {
+			secrets.save(secretOAuth.getToken());
+			secrets.save(secretOAuth.getId());
 		}
 	}
 	

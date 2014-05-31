@@ -19,25 +19,36 @@ package au.com.tyo.sn;
 /*
  * The secret for storing the access token and token secret
  */
-public class SecretOAuth extends SecretBase {
+public class SecretOAuth  {
 	
-	private SecretBase idSecret;  // for storing the user id;
+	private SecretBase id;  // for storing the user id;
+	
+	private SecretBase token;
 
 	public SecretOAuth(int type) {
-		super(type);
-		
-		this.setTypeAuth(SocialNetworkConstants.AUTHENTICATION_OAUTH_ACCESS_TOKEN);
-		
-		setIdSecret(new SecretBase(type, SocialNetworkConstants.AUTHENTICATION_OAUTH_ID));
+		setToken(new SecretBase(type, 
+				SocialNetworkConstants.AUTHENTICATION_OAUTH_ACCESS_TOKEN));
+		setId(new SecretBase(type, 
+				SocialNetworkConstants.AUTHENTICATION_OAUTH_ID));
 	}
 
-	public SecretBase getIdSecret() {
-		return idSecret;
+	public SecretBase getId() {
+		return id;
 	}
 
-	public void setIdSecret(SecretBase idSecret) {
-		this.idSecret = idSecret;
+	public void setId(SecretBase id) {
+		this.id = id;
 	}
-	
 
+	public SecretBase getToken() {
+		return token;
+	}
+
+	public void setToken(SecretBase token) {
+		this.token = token;
+	}
+
+	public boolean isBlank() {
+		return token.isBlank();
+	}
 }

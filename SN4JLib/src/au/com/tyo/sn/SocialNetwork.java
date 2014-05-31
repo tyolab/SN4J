@@ -22,7 +22,7 @@ import twitter4j.TwitterException;
 import android.content.res.Resources.NotFoundException;
 import au.com.tyo.sn.twitter.SNTwitter;
 
-public class SocialNetwork {
+public class SocialNetwork implements SocialNetworkConstants {
 	
 	private SNTwitter twitter;
 	

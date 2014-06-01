@@ -24,15 +24,20 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.webkit.WebView;
 import au.com.tyo.sn.R;
+import au.com.tyo.sn.SocialNetwork;
 import au.com.tyo.sn.twitter.SNTwitter;
 
-public class AuthorizationActivity extends Activity {
+public class TwitterAuthorizationActivity extends Activity {
 	
 	private static final String AUTHORIZATION_URL = "AUTHORIZATION_URL";
+	
+	private SNTwitter twitter;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		twitter = SocialNetwork.getInstance().getTwitter();
 		
 		this.setContentView(R.layout.twitter_authorization);
 		
@@ -49,17 +54,22 @@ public class AuthorizationActivity extends Activity {
 			finish();
 	}
 	
+	@Override
+	protected void onResume() {
+		super.onResume();
+	}
+
 	public static void startTwitterAuthorizationActivity(Context context, String authorizationUrl) {
-		Intent intent = new Intent(context, AuthorizationActivity.class);
+		Intent intent = new Intent(context, TwitterAuthorizationActivity.class);
 		intent.putExtra(AUTHORIZATION_URL, authorizationUrl);
 		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 		context.startActivity(intent);
 	}
 	
-	public static void onResumeToMainActivity(Activity mainActivity, SNTwitter  twitter) throws TwitterException {
+	public void isCalledBack() throws TwitterException {
 		
-		  if (mainActivity.getIntent()!=null && mainActivity.getIntent().getData()!=null){
-		        Uri uri = mainActivity.getIntent().getData();
+		  if (getIntent()!=null && getIntent().getData()!=null){
+		        Uri uri = getIntent().getData();
 
 		        //handle returning from authenticating the user
 		        if (uri != null && uri.toString().startsWith(twitter.getCallback().toString())) {

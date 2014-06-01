@@ -46,6 +46,6 @@ public class Twitter4Droid extends SNTwitter {
 	
 	@Override
 	protected void openAuthorizationURL(String authorizationUrl) {
-		AuthorizationActivity.startTwitterAuthorizationActivity(context, authorizationUrl);
+		TwitterAuthorizationActivity.startTwitterAuthorizationActivity(context, authorizationUrl);
 	}
 }

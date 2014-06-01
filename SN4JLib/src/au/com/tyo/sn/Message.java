@@ -21,5 +21,11 @@ public interface Message {
 	String getTitle();
 	
 	String getText();
+	
+	int getAttempts();
+
+	void setAttempts(int i);
+
+	int getSocialNetworkToShare();
 
 }

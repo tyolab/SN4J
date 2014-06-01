@@ -26,12 +26,18 @@ public class SocialNetwork implements SocialNetworkConstants {
 	
 	private SNTwitter twitter;
 	
-	private OnShareToSocialNetworkListener listener;
-	
 	private LinkedList<Message> queue; 
 	
+	private static SocialNetwork instance;
+	
+	public static SocialNetwork getInstance() {
+		if (instance == null)
+			instance = new SocialNetwork();
+		return instance;
+	}
+	
 	public SocialNetwork() {
-		listener = null;
+		queue = new LinkedList<Message>();
 	}
 
 	public SNTwitter getTwitter() {
@@ -42,36 +48,47 @@ public class SocialNetwork implements SocialNetworkConstants {
 		this.twitter = twitter;
 	}
 	
-	public void setOnShareToSocialNetworkListener(OnShareToSocialNetworkListener listener) {
-		this.listener = listener;
+	public boolean checkSocialNetworkAvailability(int type) {
+		if ((type & SocialNetworkConstants.TWITTER) == SocialNetworkConstants.TWITTER) 
+			return twitter.isAuthenticated();
+		return false;
+	}
+	
+	public void getSocialNetworkAuthenticated(int type) throws NotFoundException, TwitterException {
+		if ((type & SocialNetworkConstants.TWITTER) == SocialNetworkConstants.TWITTER) 
+			twitter.authenticate();
 	}
 
-	public void share(final int type, final Message msg) {
-		new Thread(new Runnable() {
-
-			@Override
-			public void run() {
-				boolean successful = true;
-					try {
+	public boolean share(final Message msg) throws NotFoundException, TwitterException {
+		final int type = msg.getSocialNetworkToShare();
+		
+//		new Thread(new Runnable() {
+//
+//			@Override
+//			public void run() {
+//				boolean successful = true;
+//					try {
 						if ((type & SocialNetworkConstants.TWITTER) == SocialNetworkConstants.TWITTER) {
-							if (!twitter.isAuthenticated())
-								twitter.authenticate();
+//							if (!twitter.isAuthenticated())
+//								twitter.authenticate();
 							
-							if (twitter.isAuthenticated()) 
+							if (twitter.isAuthenticated()) {
 								twitter.postTweet(msg.getText());
-							else
-								successful = false;
+								return true;
+							}
+//							else
+//								successful = false;
 						}
 						
-					} catch (NotFoundException | TwitterException e1) {
-						successful = false;
-					}			
-				
-				if (!successful && listener != null)
-					listener.onOnShareToSocialNetworkError();
-			}
-			
-		}).run();
-
+//					} catch (NotFoundException | TwitterException e1) {
+//						successful = false;
+//					}			
+//				
+//				if (!successful && listener != null)
+//					listener.onOnShareToSocialNetworkError();
+//			}
+//			
+//		}).run();
+		return false;
 	}
 }

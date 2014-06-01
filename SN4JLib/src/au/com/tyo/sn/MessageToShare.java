@@ -26,6 +26,8 @@ public class MessageToShare implements Message {
 	
 	private int snToShare; // social network to share to
 	
+	private int attempts; 
+	
 	public MessageToShare(String title, String text) {
 		this.title = title;
 		this.text = text;
@@ -49,12 +51,21 @@ public class MessageToShare implements Message {
 		this.url = url;
 	}
 
+	@Override
 	public int getSocialNetworkToShare() {
 		return snToShare;
 	}
 
 	public void setSocialNetworkToShare(int snToShare) {
 		this.snToShare = snToShare;
+	}
+
+	public int getAttempts() {
+		return attempts;
+	}
+
+	public void setAttempts(int attempts) {
+		this.attempts = attempts;
 	}
 
 }

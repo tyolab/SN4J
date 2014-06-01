@@ -27,14 +27,26 @@ import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.IBinder;
 import au.com.tyo.sn.Message;
+import au.com.tyo.sn.OnShareToSocialNetworkListener;
+import au.com.tyo.sn.SocialNetwork;
 
 public class SocialNetworkService extends Service {
+	
+    public final static int QUEUE_SIZE_LIMIT_DEFAULT = 50;
+    
+    public final static int QUEUE_SIZE_LIMIT_DEFAULT_ON_LOW_MEMORY = 10;
+    
+    public final static int ATTEMPTS_TO_TRY_BEFORE_GIVING_UP = 5;
 
-    private final IBinder mBinder = new SocialNetworkBinder();
+	private final IBinder mBinder = new SocialNetworkBinder();
     
     private LinkedList<Message> queue;
     
     private boolean keepItRunning;
+    
+    private SocialNetwork sn;
+	
+	private OnShareToSocialNetworkListener listener;
 
 	public class SocialNetworkBinder extends Binder {
         public SocialNetworkService getService() {
@@ -58,7 +70,9 @@ public class SocialNetworkService extends Service {
 	}
 	
 	public void addMessage(Message msg) {
-		queue.offer(msg);
+		synchronized (this) {
+			queue.offer(msg);
+		}
 	}
 	
     @Override
@@ -69,7 +83,13 @@ public class SocialNetworkService extends Service {
 		
 		keepItRunning = true;
 		
+		listener = null;
+		
 		new  MessageHandlingTask().execute();
+	}
+	
+	public void setOnShareToSocialNetworkListener(OnShareToSocialNetworkListener listener) {
+		this.listener = listener;
 	}
 
 	@Override
@@ -89,7 +109,37 @@ public class SocialNetworkService extends Service {
 		@Override
 		protected Void doInBackground(Void... params) {
 			while (keepItRunning) {
-				
+					if (queue.size() > 0) {
+						Message msg;
+						
+						boolean successful = false;
+						
+						synchronized (SocialNetworkService.this) {
+							msg = queue.poll();
+							
+							try {
+								msg.setAttempts(msg.getAttempts() + 1);
+								
+								successful = sn.share(msg);
+							}
+							catch (Exception ex) {
+								successful = false;
+							}								
+						}
+						
+						if (successful) {
+							if (msg.getAttempts() <= ATTEMPTS_TO_TRY_BEFORE_GIVING_UP)
+								SocialNetworkService.this.addMessage(msg);
+							else {
+								if (listener != null)
+									listener.onOnShareToSocialNetworkError();
+						}
+					}
+				}
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+				}
 			}
 			return null;
 		}

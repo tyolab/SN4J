@@ -55,6 +55,7 @@ public class SNTwitter extends SNBase {
 		this.authenticated = false;
 		
 		secretOAuth = new SecretOAuth(SocialNetworkConstants.TWITTER);
+		callback = Callback.getDefaultCallback();
 	}
 	
 //	public synchronized SecretOAuth getSecretId() {

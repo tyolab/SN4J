@@ -85,6 +85,8 @@ public class SocialNetworkService extends Service {
 		
 		listener = null;
 		
+		sn = SocialNetwork.getInstance();
+		
 		new  MessageHandlingTask().execute();
 	}
 	
@@ -117,14 +119,15 @@ public class SocialNetworkService extends Service {
 						synchronized (SocialNetworkService.this) {
 							msg = queue.poll();
 							
-							try {
-								msg.setAttempts(msg.getAttempts() + 1);
-								
-								successful = sn.share(msg);
-							}
-							catch (Exception ex) {
-								successful = false;
-							}								
+							if (msg != null)
+								try {
+									msg.setAttempts(msg.getAttempts() + 1);
+									
+									successful = sn.share(msg);
+								}
+								catch (Exception ex) {
+									successful = false;
+								}								
 						}
 						
 						if (successful) {

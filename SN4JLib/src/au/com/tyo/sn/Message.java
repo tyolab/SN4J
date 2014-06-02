@@ -28,4 +28,8 @@ public interface Message {
 
 	int getSocialNetworkToShare();
 
+	String getImageUrl();
+
+	String getUrl();
+
 }

@@ -66,7 +66,7 @@ public class SocialNetwork implements SocialNetworkConstants {
 		sn.authenticate();
 	}
 
-	public boolean share(final Message msg) {
+	public boolean share(final Message msg) throws Exception {
 		final int type = msg.getSocialNetworkToShare();
 		
 		for (int what : SUPPORTED_SOCIAL_NETWORKS) 

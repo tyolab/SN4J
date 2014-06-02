@@ -21,6 +21,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 import android.content.res.Resources.NotFoundException;
+import android.net.Uri;
 import au.com.tyo.sn.Message;
 import au.com.tyo.sn.SNBase;
 import au.com.tyo.sn.SecretOAuth;
@@ -49,6 +50,8 @@ public class SNTwitter extends SNBase {
 
 	protected SecretOAuth secretOAuth;
 	
+	private RequestToken requestToken;
+	
 	private boolean authenticated;
 	
 	public SNTwitter() {
@@ -57,6 +60,8 @@ public class SNTwitter extends SNBase {
 		this.authenticated = false;
 		
 		secretOAuth = new SecretOAuth(SocialNetwork.TWITTER);
+		
+		requestToken = null;
 	}
 	
 //	public synchronized SecretOAuth getSecretId() {
@@ -99,7 +104,7 @@ public class SNTwitter extends SNBase {
 	public void getAppAuthorized(String consumerKey, String consumerKeySecret) throws TwitterException {
 		Twitter twitter = getTwitter();
 	    twitter.setOAuthConsumer(consumerKey, consumerKeySecret);
-	    RequestToken requestToken = twitter.getOAuthRequestToken(getCallback().toString());
+	    requestToken = twitter.getOAuthRequestToken(getCallback().toString());
 	    
 	    openAuthorizationURL(requestToken.getAuthorizationURL());
 	}
@@ -154,10 +159,15 @@ public class SNTwitter extends SNBase {
 	}
 
 	@Override
-	public void processAccessToken(String token, String verifier) throws TwitterException {
+	public void retrieveAccessToken(Uri uri) throws TwitterException {
         Twitter t = this.getTwitter();
+        
+        assert(requestToken != null);
+        
+        String token = uri.getQueryParameter("oauth_token");
+        String verifier = uri.getQueryParameter("oauth_verifier");
 
-        AccessToken accessToken = t.getOAuthAccessToken(token, verifier);
+        AccessToken accessToken = t.getOAuthAccessToken(this.requestToken, verifier);
         
         secretOAuth.getId().setToken(String.valueOf(accessToken.getUserId()));
         
@@ -185,8 +195,13 @@ public class SNTwitter extends SNBase {
 	}
 
 	@Override
-	public void postStatus(Message msg) {
-		
+	public void postStatus(Message msg) throws Exception {
+		if (msg.getImageUrl() != null && msg.getImageUrl().length() > 0)
+			this.postTweetWithImage(msg.getTitle(), msg.getImageUrl(), msg.getText());
+		else if (msg.getUrl() != null && msg.getUrl().length() > 0)
+			this.postTweet(msg.getText(), msg.getUrl());
+		else
+			this.postTweet(msg.getText());
 	}
 	
 

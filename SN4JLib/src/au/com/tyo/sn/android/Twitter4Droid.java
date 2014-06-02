@@ -37,6 +37,9 @@ public class Twitter4Droid extends SNTwitter {
 		this.setSecretSafe(SecretSafe.getInstance());
 		
 		this.loadSecretsFromSafe();
+		
+		SecretSafe.getInstance().load(this.secretOAuth.getId());
+		SecretSafe.getInstance().load(this.secretOAuth.getToken());
 	}
 	
 	public void authenticate() throws NotFoundException, TwitterException {

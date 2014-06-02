@@ -16,6 +16,7 @@
 
 package au.com.tyo.sn;
 
+import android.net.Uri;
 import au.com.tyo.sn.android.Callback;
 
 public abstract class SNBase {
@@ -64,12 +65,12 @@ public abstract class SNBase {
 	
 	public abstract void saveSecretsToSafe();
 
-	public abstract void processAccessToken(String token, String verifier)
+	public abstract void retrieveAccessToken(Uri uri)
 			throws Exception;
 
 	public abstract boolean isAuthenticated();
 
 	public abstract void authenticate() throws Exception;
 
-	public abstract void postStatus(Message msg);
+	public abstract void postStatus(Message msg) throws Exception;
 }

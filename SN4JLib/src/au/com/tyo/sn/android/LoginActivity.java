@@ -16,10 +16,12 @@
 
 package au.com.tyo.sn.android;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import au.com.tyo.sn.R;
@@ -29,7 +31,10 @@ import au.com.tyo.sn.SocialNetwork;
 public class LoginActivity extends Activity {
 	
 	private static final String LOG_TAG = "LoginActivity";
+	
+	private int type = 0;
 
+	@SuppressLint("NewApi")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -38,26 +43,28 @@ public class LoginActivity extends Activity {
 		
 		Uri uri = null;
 		final Intent intent = this.getIntent();
-//		if (intent != null && intent.getData() != null) {
-//			RetrieveSocialNetworkAccessTokenTask task = new RetrieveSocialNetworkAccessTokenTask();
-//			task.execute(intent.getData());
-//		}
-//		finish();
-		new Thread(new Runnable() {
-
-			@Override
-			public void run() {
-				getAccessToken(intent.getData());
-			}
-			
-		}).run();;
+		if (intent != null && intent.getData() != null) {
+			RetrieveSocialNetworkAccessTokenTask task = new RetrieveSocialNetworkAccessTokenTask();
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
+			    task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, intent.getData());
+			else
+				task.execute(intent.getData());
+		}
+		finish();
+//		new Thread(new Runnable() {
+//
+//			@Override
+//			public void run() {
+//				new RetrieveSocialNetworkAccessTokenTask().execute(intent.getData());
+//			}
+//			
+//		}).run();
 	}
 	
 	public void getAccessToken(Uri uri) {
 		// find out which social network we are dealing with
 		String path = uri.getPath();
 		
-		int type = 0;
 		try {
 			type = path.charAt(0) == '/' ? Integer.valueOf(path.substring(1)) : Integer.valueOf(path);
 		}
@@ -72,12 +79,9 @@ public class LoginActivity extends Activity {
 			
         //handle returning from authenticating the user
 		String callbackUrl = uri.toString();
-        if (uri != null && callbackUrl.startsWith(sn.getCallback().getHomeUrl())) {
-            String token = uri.getQueryParameter("oauth_token");
-            String verifier = uri.getQueryParameter("oauth_verifier");
-		
+        if (uri != null && callbackUrl.startsWith(sn.getCallback().getHomeUrl())) {	
             try {
-				sn.processAccessToken(token, verifier);
+				sn.retrieveAccessToken(uri);
 			} catch (Exception e) {
 				e.printStackTrace();
 				Log.e(LOG_TAG, e.getLocalizedMessage() == null ? "Error in processing the twitter access token" : e.getLocalizedMessage());
@@ -85,14 +89,18 @@ public class LoginActivity extends Activity {
 		}
 	}
 	
-	public class RetrieveSocialNetworkAccessTokenTask extends
+	private class RetrieveSocialNetworkAccessTokenTask extends
 				AsyncTask<Uri, Void, Void> {
 
 		@Override
 		protected Void doInBackground(Uri... params) {
 			Uri uri = params[0];
 			
-	        
+			getAccessToken(uri);
+	         
+	         if (type == SocialNetwork.TWITTER)
+	        	 TwitterAuthorizationActivity.closeTwitterAuthorizationActivity(LoginActivity.this);
+				
 	         finish();
 			return null;
 		}

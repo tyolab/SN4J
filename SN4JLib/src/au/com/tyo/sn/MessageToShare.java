@@ -24,6 +24,8 @@ public class MessageToShare implements Message {
 	
 	private String url;
 	
+	private String imageUrl;
+	
 	private int snToShare; // social network to share to
 	
 	private int attempts; 
@@ -43,12 +45,22 @@ public class MessageToShare implements Message {
 		return text;
 	}
 
+	@Override
 	public String getUrl() {
 		return url;
 	}
 
 	public void setUrl(String url) {
 		this.url = url;
+	}
+
+	@Override
+	public String getImageUrl() {
+		return imageUrl;
+	}
+
+	public void setImageUrl(String imageUrl) {
+		this.imageUrl = imageUrl;
 	}
 
 	@Override

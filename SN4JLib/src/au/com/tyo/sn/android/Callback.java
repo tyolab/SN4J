@@ -28,6 +28,8 @@ public class Callback {
 	
 	private String host;
 	
+	private String path; // to show what social network for
+	
 	private static Callback callback;
 	
 	static {
@@ -39,16 +41,39 @@ public class Callback {
 		this.host = CALLBACK_DEFAULT_HOST;
 	}
 	
+	public Callback(String path) {
+		this();
+		this.path = path;
+	}
+	
 	public Callback(String scheme, String host) {
 		this.scheme = scheme;
 		this.host = host;
+	}
+	
+	public Callback(String scheme, String host, String path) {
+		this(scheme, host);
+		this.setPath(path);
 	}
 	
 	public static Callback getDefaultCallback() {
 		return callback;
 	}
 
+	public String getPath() {
+		return path;
+	}
+
+	public void setPath(String path) {
+		this.path = path;
+	}
+
 	public Uri toUri() {
 		return Uri.parse(scheme+"://" + host);
+	}
+	
+	@Override
+	public String toString() {
+		return toUri().toString();
 	}
 }

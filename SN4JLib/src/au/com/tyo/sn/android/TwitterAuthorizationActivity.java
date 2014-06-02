@@ -22,12 +22,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.webkit.WebView;
 import au.com.tyo.sn.R;
 import au.com.tyo.sn.SocialNetwork;
 import au.com.tyo.sn.twitter.SNTwitter;
 
 public class TwitterAuthorizationActivity extends Activity {
+	
+	private static final String LOG_TAG = "TwitterAuthorizationActivity";
 	
 	private static final String AUTHORIZATION_URL = "AUTHORIZATION_URL";
 	
@@ -44,11 +47,14 @@ public class TwitterAuthorizationActivity extends Activity {
 		WebView wv = (WebView) findViewById(R.id.wv_twitter_authorization);
 		
 		Intent intent = this.getIntent();
-		Bundle extras = intent.getExtras();
-		if (extras != null) {
-			String url = intent.getStringExtra(AUTHORIZATION_URL);
 			
-			wv.loadUrl(url);
+		if (!isFromCalledBack()) {
+			Bundle extras = intent.getExtras();
+			if (extras != null) {
+				String url = intent.getStringExtra(AUTHORIZATION_URL);
+				
+				wv.loadUrl(url);
+			}
 		}
 		else
 			finish();
@@ -57,6 +63,9 @@ public class TwitterAuthorizationActivity extends Activity {
 	@Override
 	protected void onResume() {
 		super.onResume();
+		
+		if (isFromCalledBack())
+			finish();
 	}
 
 	public static void startTwitterAuthorizationActivity(Context context, String authorizationUrl) {
@@ -64,20 +73,5 @@ public class TwitterAuthorizationActivity extends Activity {
 		intent.putExtra(AUTHORIZATION_URL, authorizationUrl);
 		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 		context.startActivity(intent);
-	}
-	
-	public void isCalledBack() throws TwitterException {
-		
-		  if (getIntent()!=null && getIntent().getData()!=null){
-		        Uri uri = getIntent().getData();
-
-		        //handle returning from authenticating the user
-		        if (uri != null && uri.toString().startsWith(twitter.getCallback().toString())) {
-		            String token = uri.getQueryParameter("oauth_token");
-		            String verifier = uri.getQueryParameter("oauth_verifier");
-
-		            twitter.processAccessToken(token, verifier);
-		        }
-		    }    
 	}
 }

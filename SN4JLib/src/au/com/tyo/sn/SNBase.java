@@ -20,8 +20,18 @@ public abstract class SNBase {
 	
 	protected Secrets secrets;
 	
+	protected int type;
+	
 	public SNBase() {
-		
+		type = SocialNetwork.ANY;
+	}
+
+	public synchronized int getType() {
+		return type;
+	}
+
+	public synchronized void setType(int type) {
+		this.type = type;
 	}
 
 	public Secrets getSecretSafe() {
@@ -35,4 +45,7 @@ public abstract class SNBase {
 	public abstract void loadSecretsFromSafe();
 	
 	public abstract void saveSecretsToSafe();
+
+	public abstract void processAccessToken(String token, String verifier)
+			throws Exception;
 }

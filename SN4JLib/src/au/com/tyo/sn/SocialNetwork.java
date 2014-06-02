@@ -16,10 +16,12 @@
 
 package au.com.tyo.sn;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 
 import twitter4j.TwitterException;
 import android.content.res.Resources.NotFoundException;
+
 import au.com.tyo.sn.twitter.SNTwitter;
 
 public class SocialNetwork implements SocialNetworkConstants {
@@ -27,6 +29,8 @@ public class SocialNetwork implements SocialNetworkConstants {
 	private SNTwitter twitter;
 	
 	private LinkedList<Message> queue; 
+	
+	private HashMap<Integer, SNBase> sns;
 	
 	private static SocialNetwork instance;
 	
@@ -48,7 +52,9 @@ public class SocialNetwork implements SocialNetworkConstants {
 		this.twitter = twitter;
 	}
 	
-	public boolean checkSocialNetworkAvailability(int type) {
+	public void setSocialNetwork(SNBase)
+	
+	public boolean hasLogedInSocialNetwork(int type) {
 		if ((type & SocialNetworkConstants.TWITTER) == SocialNetworkConstants.TWITTER) 
 			return twitter.isAuthenticated();
 		return false;
@@ -90,5 +96,9 @@ public class SocialNetwork implements SocialNetworkConstants {
 //			
 //		}).run();
 		return false;
+	}
+
+	public SNBase getSocialNetwork(int type) {
+		return sns.get(type);
 	}
 }

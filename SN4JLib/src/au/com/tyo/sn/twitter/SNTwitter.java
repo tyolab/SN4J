@@ -24,6 +24,7 @@ import android.content.res.Resources.NotFoundException;
 import au.com.tyo.sn.SNBase;
 import au.com.tyo.sn.SecretOAuth;
 import au.com.tyo.sn.Secrets;
+import au.com.tyo.sn.SocialNetwork;
 import au.com.tyo.sn.SocialNetworkConstants;
 import au.com.tyo.sn.android.Callback;
 import twitter4j.Status;
@@ -54,8 +55,9 @@ public class SNTwitter extends SNBase {
 	public SNTwitter() {
 		this.authenticated = false;
 		
-		secretOAuth = new SecretOAuth(SocialNetworkConstants.TWITTER);
+		secretOAuth = new SecretOAuth(SocialNetwork.TWITTER);
 		callback = Callback.getDefaultCallback();
+		this.setType(SocialNetwork.TWITTER);
 	}
 	
 //	public synchronized SecretOAuth getSecretId() {
@@ -106,7 +108,7 @@ public class SNTwitter extends SNBase {
 	public void getAppAuthorized(String consumerKey, String consumerKeySecret) throws TwitterException {
 		Twitter twitter = getTwitter();
 	    twitter.setOAuthConsumer(consumerKey, consumerKeySecret);
-	    RequestToken requestToken = twitter.getOAuthRequestToken();
+	    RequestToken requestToken = twitter.getOAuthRequestToken(callback.toString());
 	    
 	    openAuthorizationURL(requestToken.getAuthorizationURL());
 	}
@@ -160,6 +162,7 @@ public class SNTwitter extends SNBase {
 		return this.authenticated;
 	}
 
+	@Override
 	public void processAccessToken(String token, String verifier) throws TwitterException {
         Twitter t = this.getTwitter();
 

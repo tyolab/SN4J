@@ -16,31 +16,23 @@
 
 package au.com.tyo.sn.android;
 
-import twitter4j.TwitterException;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.webkit.WebView;
 import au.com.tyo.sn.R;
-import au.com.tyo.sn.SocialNetwork;
-import au.com.tyo.sn.twitter.SNTwitter;
 
 public class TwitterAuthorizationActivity extends Activity {
 	
 	private static final String LOG_TAG = "TwitterAuthorizationActivity";
 	
 	private static final String AUTHORIZATION_URL = "AUTHORIZATION_URL";
-	
-	private SNTwitter twitter;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		twitter = SocialNetwork.getInstance().getTwitter();
 		
 		this.setContentView(R.layout.twitter_authorization);
 		
@@ -48,23 +40,13 @@ public class TwitterAuthorizationActivity extends Activity {
 		
 		Intent intent = this.getIntent();
 			
-		if (!isFromCalledBack()) {
-			Bundle extras = intent.getExtras();
-			if (extras != null) {
-				String url = intent.getStringExtra(AUTHORIZATION_URL);
-				
-				wv.loadUrl(url);
-			}
+		Bundle extras = intent.getExtras();
+		if (extras != null) {
+			String url = intent.getStringExtra(AUTHORIZATION_URL);
+			
+			wv.loadUrl(url);
 		}
 		else
-			finish();
-	}
-	
-	@Override
-	protected void onResume() {
-		super.onResume();
-		
-		if (isFromCalledBack())
 			finish();
 	}
 

@@ -16,14 +16,22 @@
 
 package au.com.tyo.sn;
 
+import au.com.tyo.sn.android.Callback;
+
 public abstract class SNBase {
 	
 	protected Secrets secrets;
 	
 	protected int type;
 	
+	private Callback callback;
+	
 	public SNBase() {
 		type = SocialNetwork.ANY;
+	}
+	
+	public SNBase(int type) {
+		this.type = type;
 	}
 
 	public synchronized int getType() {
@@ -41,6 +49,14 @@ public abstract class SNBase {
 	public void setSecretSafe(Secrets secrets) {
 		this.secrets = secrets;
 	}
+
+	public Callback getCallback() {
+		return callback;
+	}
+
+	public void setCallback(Callback callback) {
+		this.callback = callback;
+	}
 	
 	public abstract void loadSecretsFromSafe();
 	
@@ -48,4 +64,10 @@ public abstract class SNBase {
 
 	public abstract void processAccessToken(String token, String verifier)
 			throws Exception;
+
+	public abstract boolean isAuthenticated();
+
+	public abstract void authenticate() throws Exception;
+
+	public abstract void postStatus(Message msg);
 }

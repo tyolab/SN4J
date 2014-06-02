@@ -21,6 +21,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 import android.content.res.Resources.NotFoundException;
+import au.com.tyo.sn.Message;
 import au.com.tyo.sn.SNBase;
 import au.com.tyo.sn.SecretOAuth;
 import au.com.tyo.sn.Secrets;
@@ -50,14 +51,12 @@ public class SNTwitter extends SNBase {
 	
 	private boolean authenticated;
 	
-	private Callback callback;
-	
 	public SNTwitter() {
+		super(SocialNetwork.TWITTER);
+		
 		this.authenticated = false;
 		
 		secretOAuth = new SecretOAuth(SocialNetwork.TWITTER);
-		callback = Callback.getDefaultCallback();
-		this.setType(SocialNetwork.TWITTER);
 	}
 	
 //	public synchronized SecretOAuth getSecretId() {
@@ -74,14 +73,6 @@ public class SNTwitter extends SNBase {
 
 	public synchronized void setSecretToken(SecretOAuth secretToken) {
 		this.secretOAuth = secretToken;
-	}
-
-	public Callback getCallback() {
-		return callback;
-	}
-
-	public void setCallback(Callback callback) {
-		this.callback = callback;
 	}
 	
 	public void authenticate(String consumerKey, String consumerKeySecret) throws TwitterException {
@@ -108,7 +99,7 @@ public class SNTwitter extends SNBase {
 	public void getAppAuthorized(String consumerKey, String consumerKeySecret) throws TwitterException {
 		Twitter twitter = getTwitter();
 	    twitter.setOAuthConsumer(consumerKey, consumerKeySecret);
-	    RequestToken requestToken = twitter.getOAuthRequestToken(callback.toString());
+	    RequestToken requestToken = twitter.getOAuthRequestToken(getCallback().toString());
 	    
 	    openAuthorizationURL(requestToken.getAuthorizationURL());
 	}
@@ -154,7 +145,7 @@ public class SNTwitter extends SNBase {
 		return false;
 	}
 
-	public void authenticate() throws NotFoundException, TwitterException {
+	public void authenticate() throws Exception {
 		throw new UnsupportedOperationException("Override and implement this method (authenticate()) are needed");
 	}
 
@@ -191,6 +182,11 @@ public class SNTwitter extends SNBase {
 			secrets.save(secretOAuth.getToken());
 			secrets.save(secretOAuth.getId());
 		}
+	}
+
+	@Override
+	public void postStatus(Message msg) {
+		
 	}
 	
 

@@ -37,8 +37,7 @@ public class Callback {
 	}
 	
 	public Callback() {
-		this.scheme = CALLBACK_DEFAULT_SCHEME;
-		this.host = CALLBACK_DEFAULT_HOST;
+		this(CALLBACK_DEFAULT_SCHEME, CALLBACK_DEFAULT_HOST);
 	}
 	
 	public Callback(String path) {
@@ -47,12 +46,12 @@ public class Callback {
 	}
 	
 	public Callback(String scheme, String host) {
-		this.scheme = scheme;
-		this.host = host;
+		this(scheme, host, "");
 	}
 	
 	public Callback(String scheme, String host, String path) {
-		this(scheme, host);
+		this.scheme = scheme;
+		this.host = host;
 		this.setPath(path);
 	}
 	
@@ -69,7 +68,7 @@ public class Callback {
 	}
 
 	public Uri toUri() {
-		return Uri.parse(scheme+"://" + host);
+		return Uri.parse(scheme+"://" + host + "/" + path);
 	}
 	
 	@Override

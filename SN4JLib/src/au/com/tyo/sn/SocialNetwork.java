@@ -19,14 +19,11 @@ package au.com.tyo.sn;
 import java.util.HashMap;
 import java.util.LinkedList;
 
-import twitter4j.TwitterException;
-import android.content.res.Resources.NotFoundException;
-
 import au.com.tyo.sn.twitter.SNTwitter;
 
 public class SocialNetwork implements SocialNetworkConstants {
 	
-	private SNTwitter twitter;
+//	private SNTwitter twitter;
 	
 	private LinkedList<Message> queue; 
 	
@@ -45,60 +42,69 @@ public class SocialNetwork implements SocialNetworkConstants {
 	}
 
 	public SNTwitter getTwitter() {
-		return twitter;
+		return (SNTwitter) sns.get(SocialNetwork.TWITTER);
 	}
 
 	public void setTwitter(SNTwitter twitter) {
-		this.twitter = twitter;
+//		this.twitter = twitter;
+		this.setSocialNetwork(twitter);
 	}
 	
-	public void setSocialNetwork(SNBase)
+	public void setSocialNetwork(SNBase sn) {
+		sns.put(sn.getType(), sn);
+	}
 	
 	public boolean hasLogedInSocialNetwork(int type) {
-		if ((type & SocialNetworkConstants.TWITTER) == SocialNetworkConstants.TWITTER) 
-			return twitter.isAuthenticated();
-		return false;
+		SNBase sn = this.getSocialNetwork(type);
+		return sn.isAuthenticated();
 	}
 	
-	public void getSocialNetworkAuthenticated(int type) throws NotFoundException, TwitterException {
-		if ((type & SocialNetworkConstants.TWITTER) == SocialNetworkConstants.TWITTER) 
-			twitter.authenticate();
+	public void getSocialNetworkAuthenticated(int type) throws Exception {
+		SNBase sn = this.getSocialNetwork(type);
+		sn.authenticate();
 	}
 
-	public boolean share(final Message msg) throws NotFoundException, TwitterException {
+	public boolean share(final Message msg) {
 		final int type = msg.getSocialNetworkToShare();
 		
-//		new Thread(new Runnable() {
-//
-//			@Override
-//			public void run() {
-//				boolean successful = true;
-//					try {
-						if ((type & SocialNetworkConstants.TWITTER) == SocialNetworkConstants.TWITTER) {
-//							if (!twitter.isAuthenticated())
-//								twitter.authenticate();
-							
-							if (twitter.isAuthenticated()) {
-								twitter.postTweet(msg.getText());
-								return true;
-							}
-//							else
-//								successful = false;
-						}
-						
-//					} catch (NotFoundException | TwitterException e1) {
-//						successful = false;
-//					}			
-//				
-//				if (!successful && listener != null)
-//					listener.onOnShareToSocialNetworkError();
-//			}
-//			
-//		}).run();
-		return false;
+		for (int what : SUPPORTED_SOCIAL_NETWORKS) 
+			if ((type & what) == what) {
+
+				SNBase sn = getSocialNetwork(what);
+				if (sn.isAuthenticated()) {
+					sn.postStatus(msg);
+				}
+			}
+		return true;
 	}
 
 	public SNBase getSocialNetwork(int type) {
 		return sns.get(type);
+	}
+
+	public static SNBase createSocialNetwork(int type) {
+		/*
+		 * TODO
+		 *   create other network classes
+		 */
+		SNBase sn = null;
+		switch (type) {
+		case SocialNetwork.TWITTER:
+			sn = new SNTwitter();
+			break;
+		case SocialNetwork.FACEBOOK:
+//			sn = new SNBase(SocialNetwork.FACEBOOK);
+			break;
+		case SocialNetwork.GOOGLE_PLUS:
+//			sn = new SNBase(SocialNetwork.FACEBOOK);
+			break;		
+		case SocialNetwork.LINKED_IN:
+//			sn = new SNBase(SocialNetwork.FACEBOOK);
+			break;				
+		case SocialNetwork.ANY:
+		default:
+				break;
+		}
+		return sn;
 	}
 }

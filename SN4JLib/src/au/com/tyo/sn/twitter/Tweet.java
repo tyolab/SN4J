@@ -16,8 +16,6 @@
 
 package au.com.tyo.sn.twitter;
 
-import au.com.tyo.sn.shortener.GooGl;
-
 public class Tweet {
 	
 	public static final int CHARACTER_LIMIT = 140;

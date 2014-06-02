@@ -21,10 +21,14 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import au.com.tyo.sn.R;
+import au.com.tyo.sn.SNBase;
 import au.com.tyo.sn.SocialNetwork;
 
 public class LoginActivity extends Activity {
+	
+	private static final String LOG_TAG = "LoginActivity";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +46,7 @@ public class LoginActivity extends Activity {
 	
 	public class RetrieveSocialNetworkAccessTokenTask extends
 				AsyncTask<Uri, Void, Void> {
-			
+
 		@Override
 		protected Void doInBackground(Uri... params) {
 			Uri uri = params[0];
@@ -54,19 +58,22 @@ public class LoginActivity extends Activity {
 			
 			SNBase sn = SocialNetwork.getInstance().getSocialNetwork(type);
 			
+			if (sn == null) {
+				sn = SocialNetwork.createSocialNetwork(type);
+			}
+				
 	        //handle returning from authenticating the user
-	        if (uri != null && uri.toString().startsWith(twitter.getCallback().toString())) {
+	        if (uri != null && uri.toString().startsWith(sn.getCallback().toString())) {
 	            String token = uri.getQueryParameter("oauth_token");
 	            String verifier = uri.getQueryParameter("oauth_verifier");
 			
-            try {
-				twitter.processAccessToken(token, verifier);
-			} catch (TwitterException e) {
-				Log.e(LOG_TAG, e.getLocalizedMessage() == null ? "Error in processing the twitter access token" : e.getLocalizedMessage());
+	            try {
+					sn.processAccessToken(token, verifier);
+				} catch (Exception e) {
+					Log.e(LOG_TAG, e.getLocalizedMessage() == null ? "Error in processing the twitter access token" : e.getLocalizedMessage());
+				}
 			}
-			
 			return null;
 		}
-			
 	}
 }

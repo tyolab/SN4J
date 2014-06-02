@@ -27,11 +27,13 @@ public abstract class SNBase {
 	private Callback callback;
 	
 	public SNBase() {
-		type = SocialNetwork.ANY;
+		this(SocialNetwork.ANY);
 	}
 	
 	public SNBase(int type) {
 		this.type = type;
+		
+		setCallback(new Callback(String.valueOf(this.getType())));
 	}
 
 	public synchronized int getType() {

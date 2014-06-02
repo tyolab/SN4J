@@ -71,6 +71,14 @@ public class Callback {
 		return Uri.parse(scheme+"://" + host + "/" + path);
 	}
 	
+	public String getHomeUrl() {
+		return Uri.parse(scheme+"://" + host).toString();
+	}
+	
+	public String getUrl() {
+		return toString();
+	}
+	
 	@Override
 	public String toString() {
 		return toUri().toString();

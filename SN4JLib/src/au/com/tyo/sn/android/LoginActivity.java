@@ -37,11 +37,52 @@ public class LoginActivity extends Activity {
 		setContentView(R.layout.login);
 		
 		Uri uri = null;
-		Intent intent = this.getIntent();
-		if (intent != null && intent.getData() != null) 
-			new  RetrieveSocialNetworkAccessTokenTask().execute(intent.getData());
-		else
-			finish();
+		final Intent intent = this.getIntent();
+//		if (intent != null && intent.getData() != null) {
+//			RetrieveSocialNetworkAccessTokenTask task = new RetrieveSocialNetworkAccessTokenTask();
+//			task.execute(intent.getData());
+//		}
+//		finish();
+		new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				getAccessToken(intent.getData());
+			}
+			
+		}).run();;
+	}
+	
+	public void getAccessToken(Uri uri) {
+		// find out which social network we are dealing with
+		String path = uri.getPath();
+		
+		int type = 0;
+		try {
+			type = path.charAt(0) == '/' ? Integer.valueOf(path.substring(1)) : Integer.valueOf(path);
+		}
+		catch (Exception ex) {
+			type = 1;  // twitter for default? 
+		}
+		
+		SNBase sn = SocialNetwork.getInstance().getSocialNetwork(type);
+		
+		if (sn == null) 
+			SocialNetwork.getInstance().setSocialNetwork(sn = SocialNetwork.createSocialNetwork(type));
+			
+        //handle returning from authenticating the user
+		String callbackUrl = uri.toString();
+        if (uri != null && callbackUrl.startsWith(sn.getCallback().getHomeUrl())) {
+            String token = uri.getQueryParameter("oauth_token");
+            String verifier = uri.getQueryParameter("oauth_verifier");
+		
+            try {
+				sn.processAccessToken(token, verifier);
+			} catch (Exception e) {
+				e.printStackTrace();
+				Log.e(LOG_TAG, e.getLocalizedMessage() == null ? "Error in processing the twitter access token" : e.getLocalizedMessage());
+			}
+		}
 	}
 	
 	public class RetrieveSocialNetworkAccessTokenTask extends
@@ -51,28 +92,8 @@ public class LoginActivity extends Activity {
 		protected Void doInBackground(Uri... params) {
 			Uri uri = params[0];
 			
-			// find out which social network we are dealing with
-			String path = uri.getPath();
-			
-			int type = path.charAt(0) == '/' ? Integer.valueOf(path.substring(1)) : Integer.valueOf(path);
-			
-			SNBase sn = SocialNetwork.getInstance().getSocialNetwork(type);
-			
-			if (sn == null) {
-				sn = SocialNetwork.createSocialNetwork(type);
-			}
-				
-	        //handle returning from authenticating the user
-	        if (uri != null && uri.toString().startsWith(sn.getCallback().toString())) {
-	            String token = uri.getQueryParameter("oauth_token");
-	            String verifier = uri.getQueryParameter("oauth_verifier");
-			
-	            try {
-					sn.processAccessToken(token, verifier);
-				} catch (Exception e) {
-					Log.e(LOG_TAG, e.getLocalizedMessage() == null ? "Error in processing the twitter access token" : e.getLocalizedMessage());
-				}
-			}
+	        
+	         finish();
 			return null;
 		}
 	}

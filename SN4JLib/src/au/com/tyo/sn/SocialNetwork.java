@@ -18,6 +18,7 @@ package au.com.tyo.sn;
 
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 
 import au.com.tyo.sn.twitter.SNTwitter;
 
@@ -27,7 +28,7 @@ public class SocialNetwork implements SocialNetworkConstants {
 	
 	private LinkedList<Message> queue; 
 	
-	private HashMap<Integer, SNBase> sns;
+	private Map<Integer, SNBase> sns;
 	
 	private static SocialNetwork instance;
 	
@@ -39,6 +40,7 @@ public class SocialNetwork implements SocialNetworkConstants {
 	
 	public SocialNetwork() {
 		queue = new LinkedList<Message>();
+		sns = new HashMap<Integer, SNBase>();
 	}
 
 	public SNTwitter getTwitter() {

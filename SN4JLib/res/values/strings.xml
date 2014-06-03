@@ -21,4 +21,6 @@
     <string name="twitter">Twitter</string>
     <string name="tweet">Tweet</string>
     <string name="logging_in">Logging in your social network, please wait...</string>
+    <string name="share_message_succeeded"> has be successfully shared.</string>
+    <string name="share_message_failed">Sorry, there was something wrong when sharing the article</string>
 </resources>

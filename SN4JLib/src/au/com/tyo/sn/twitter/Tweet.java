@@ -18,11 +18,11 @@ package au.com.tyo.sn.twitter;
 
 public class Tweet {
 	
-	public static final int CHARACTER_LIMIT = 140;
+	public static final int CHARACTER_LIMIT = 140; 
 	
 	protected StringBuffer buffer;
 	
-	protected int limit;
+	protected static int limit;
 	
 	public Tweet() {
 		buffer = new StringBuffer();
@@ -35,8 +35,12 @@ public class Tweet {
 			limit = 0;
 	}
 	
-	public int getLimit() {
+	public static int getLimit() {
 		return limit;
+	}
+	
+	public static void setLimit(int limit) {
+		Tweet.limit = limit;
 	}
 	
 	public void appendOrNot(String what) {

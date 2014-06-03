@@ -20,4 +20,6 @@ public interface OnShareToSocialNetworkListener {
 
 	void onOnShareToSocialNetworkError();
 
+	void onOnShareToSocialNetworkSuccessfully(String title);
+
 }

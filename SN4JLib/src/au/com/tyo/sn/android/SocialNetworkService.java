@@ -93,6 +93,10 @@ public class SocialNetworkService extends Service {
 	public void setOnShareToSocialNetworkListener(OnShareToSocialNetworkListener listener) {
 		this.listener = listener;
 	}
+	
+	public OnShareToSocialNetworkListener getOnShareToSocialNetworkListener() {
+		return listener;
+	}
 
 	@Override
 	public void onDestroy() {
@@ -130,15 +134,19 @@ public class SocialNetworkService extends Service {
 								}								
 						}
 						
-						if (successful) {
+						if (!successful) {
 							if (msg.getAttempts() <= ATTEMPTS_TO_TRY_BEFORE_GIVING_UP)
 								SocialNetworkService.this.addMessage(msg);
 							else {
 								if (listener != null)
 									listener.onOnShareToSocialNetworkError();
+							}
 						}
-					}
+						else 
+							if (listener != null)
+								listener.onOnShareToSocialNetworkSuccessfully(msg.getTitle());
 				}
+					
 				try {
 					Thread.sleep(1000);
 				} catch (InterruptedException e) {

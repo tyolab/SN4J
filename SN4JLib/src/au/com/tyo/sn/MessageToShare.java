@@ -33,6 +33,10 @@ public class MessageToShare implements Message {
 	public MessageToShare(String title, String text) {
 		this.title = title;
 		this.text = text;
+		this.url = null;
+		this.imageUrl = null;
+		snToShare = SocialNetwork.ANY;
+		attempts = 0;
 	}
 
 	@Override

@@ -20,7 +20,7 @@ public class MessageToShare implements Message {
 	
 	private String title;
 	
-	private String text;
+	private Status status;
 	
 	private String url;
 	
@@ -30,9 +30,9 @@ public class MessageToShare implements Message {
 	
 	private int attempts; 
 	
-	public MessageToShare(String title, String text) {
+	public MessageToShare(String title, Status status) {
 		this.title = title;
-		this.text = text;
+		this.status = status;
 		this.url = null;
 		this.imageUrl = null;
 		snToShare = SocialNetwork.ANY;
@@ -45,8 +45,8 @@ public class MessageToShare implements Message {
 	}
 
 	@Override
-	public String getText() {
-		return text;
+	public Status getStatus() {
+		return status;
 	}
 
 	@Override
@@ -82,6 +82,11 @@ public class MessageToShare implements Message {
 
 	public void setAttempts(int attempts) {
 		this.attempts = attempts;
+	}
+
+	@Override
+	public String getText() {
+		return status.getText();
 	}
 
 }

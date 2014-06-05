@@ -13,14 +13,13 @@
 	  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 	  See the License for the specific language governing permissions and
 	  limitations under the License.
- -->
-<resources>
+ --><resources>
     <string name="app_name">SN4J</string>
     <string name="share">Share</string>
     <string name="share_via">Share via</string>
     <string name="twitter">Twitter</string>
     <string name="tweet">Tweet</string>
     <string name="logging_in">Logging in your social network, please wait...</string>
-    <string name="share_message_succeeded"> has be successfully shared.</string>
+    <string name="share_message_succeeded"> has been successfully shared.</string>
     <string name="share_message_failed">Sorry, there was something wrong when sharing the article</string>
 </resources>

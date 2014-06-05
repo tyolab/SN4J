@@ -16,22 +16,10 @@
 
 package au.com.tyo.sn;
 
-public interface Message {
-	
-	String getTitle();
-	
+public interface Status {
+
 	String getText();
-	
-	Status getStatus();
-	
-	int getAttempts();
 
-	void setAttempts(int i);
-
-	int getSocialNetworkToShare();
-
-	String getImageUrl();
-
-	String getUrl();
+	void shrinkToFit(int i);
 
 }

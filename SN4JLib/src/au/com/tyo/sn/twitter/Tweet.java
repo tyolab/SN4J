@@ -16,17 +16,47 @@
 
 package au.com.tyo.sn.twitter;
 
-public class Tweet {
+import au.com.tyo.sn.Status;
+
+public class Tweet implements Status {
 	
 	public static final int CHARACTER_LIMIT = 140; 
 	
-	protected StringBuffer buffer;
+	public static final int CHARACTER_NUMBER_TO_REMOVE = 3;
+	
+	public static final int CHARCTERS_NUMBER_MINIMUM = 20; // ?
+	
+	public static final String ELLIPSIS =  " ... ";
+	
+	protected StringBuffer buffer;  // the body text;
+	
+	private String prefix;
+	
+	private String signature;
+	
+	private String url;
 	
 	protected static int limit;
+	
+	private boolean trimmed;
 	
 	public Tweet() {
 		buffer = new StringBuffer();
 		limit = CHARACTER_LIMIT;
+		trimmed = false;
+	}
+	
+	public Tweet(String text) {
+		this(text, "", "", "");
+	}
+	
+	public Tweet(String text, String prefix, String signature, String url) {
+		this();
+		
+		this.prefix = prefix;
+		this.buffer.append(text);
+		this.signature = signature;
+		this.url = url;
 	}
 	
 	public void preOccupy(int howManyChars) {
@@ -66,30 +96,83 @@ public class Tweet {
 	}
 	
 	public void appendUrl(String url, boolean trimToFit, int minLength) {
-		String tempUrl = url;
+		this.url = url;
 //		if (buffer.length() + tempUrl.length() > getLimit()) 
 //			tempUrl = GooGl.getShortenedUrl(tempUrl);
 		
-		if (buffer.length() + tempUrl.length() > getLimit() && trimToFit) {
-			String endStr = " ... " + tempUrl;
-			int whereShouldBeTrim = getLimit() - endStr.length();
-			
-			if (buffer.length() > whereShouldBeTrim && whereShouldBeTrim > 0) {
-				int i = buffer.length() - 1;
-				for (; i > whereShouldBeTrim; --i) {
-					if (minLength > 0 && i <= minLength)
-						break;
-					buffer.deleteCharAt(i);
-				}
-				
-				while (Character.isLetterOrDigit(buffer.charAt(i)))
-						buffer.deleteCharAt(i--);
-			}
-			buffer.append(endStr);
+		int whereShouldBeTrim = getTextLengthShouldBe();
+		if (buffer.length() > whereShouldBeTrim && trimToFit) {
+			trimmed = true;
+			shrinkToFit();
 		}
 		else
-			this.appendOrNot(tempUrl);
-//		buffer.append(" " + tempUrl);
+			this.appendOrNot(url);
+	}
+	
+	public void shrinkToFit() {
+		int whereShouldBeTrim = getTextLengthShouldBe();
+		if (trimmed)
+			whereShouldBeTrim -= ELLIPSIS.length(); 
+		
+		if (buffer.length() > whereShouldBeTrim && whereShouldBeTrim > 0) {
+			int howmanytotrim = buffer.length() - whereShouldBeTrim;
+			shrinkToFit(howmanytotrim);
+		}
+	}
 
+	public void shrinkToFit(int number) {
+		int i = buffer.length() - 1;
+		for (; i > number; --i) {
+			if (buffer.length() <= CHARCTERS_NUMBER_MINIMUM)
+				break;
+			buffer.deleteCharAt(i);
+		}
+		
+		while (buffer.length() > 0 && Character.isLetterOrDigit(buffer.charAt(i)))
+				buffer.deleteCharAt(i--);
+	}
+
+	public String getPrefix() {
+		return prefix;
+	}
+
+	public void setPrefix(String prefix) {
+		this.prefix = prefix;
+	}
+
+	public String getSignature() {
+		return signature;
+	}
+
+	public void setSignature(String signature) {
+		this.signature = signature;
+	}
+	
+	private int getTextLengthShouldBe() {
+		return this.getTextLengthShouldBe(0);
+	}
+	
+	private int getTextLengthShouldBe(int i) {
+		return limit - url.length() - prefix.length() - signature.length() - i - (trimmed ? ELLIPSIS.length() : 0); 
+	}
+	
+	public String toString() {
+		String tweet = create();
+		
+		if (tweet.length() > limit) {
+			trimmed = true;
+			this.shrinkToFit();
+			tweet = create();
+		}
+		return tweet;
+	}
+	
+	public String create() {
+		return prefix + buffer.toString() + (trimmed ? ELLIPSIS : "") + url + signature;
+	}
+
+	@Override
+	public String getText() {
+		return toString();
 	}
 }

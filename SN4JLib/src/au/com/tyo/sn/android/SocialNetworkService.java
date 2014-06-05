@@ -18,6 +18,7 @@ package au.com.tyo.sn.android;
 
 import java.util.LinkedList;
 
+import twitter4j.TwitterException;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningServiceInfo;
 import android.app.Service;
@@ -29,6 +30,7 @@ import android.os.IBinder;
 import au.com.tyo.sn.Message;
 import au.com.tyo.sn.OnShareToSocialNetworkListener;
 import au.com.tyo.sn.SocialNetwork;
+import au.com.tyo.sn.twitter.Tweet;
 
 public class SocialNetworkService extends Service {
 	
@@ -87,7 +89,8 @@ public class SocialNetworkService extends Service {
 		
 		sn = SocialNetwork.getInstance();
 		
-		new  MessageHandlingTask().execute();
+//		new  MessageHandlingTask().execute();
+		new Thread(new MessageHandlingTask()).start();
 	}
 	
 	public void setOnShareToSocialNetworkListener(OnShareToSocialNetworkListener listener) {
@@ -110,47 +113,76 @@ public class SocialNetworkService extends Service {
 		return super.onStartCommand(intent, flags, startId);
 	}
 	
-	private class MessageHandlingTask extends AsyncTask<Void, Void, Void> {
+	private class MessageHandlingTask implements Runnable/*AsyncTask<Void, Void, Void>*/ {
+		
+		public MessageHandlingTask() {
+			Thread.currentThread().setName("MessageHandlingTask");
+		}
 
 		@Override
-		protected Void doInBackground(Void... params) {
+//		protected Void doInBackground(Void... params) {
+		public void run() {
+			
 			while (keepItRunning) {
-					if (queue.size() > 0) {
-						Message msg;
-						
-						boolean successful = false;
-						
-						synchronized (SocialNetworkService.this) {
-							msg = queue.poll();
-							
-							if (msg != null)
-								try {
-									msg.setAttempts(msg.getAttempts() + 1);
-									
-									successful = sn.share(msg);
-								}
-								catch (Exception ex) {
-									successful = false;
-								}								
-						}
-						
-						if (!successful) {
-							if (msg.getAttempts() <= ATTEMPTS_TO_TRY_BEFORE_GIVING_UP)
-								SocialNetworkService.this.addMessage(msg);
-							else {
-								if (listener != null)
-									listener.onOnShareToSocialNetworkError();
-							}
-						}
-						else 
-							if (listener != null)
-								listener.onOnShareToSocialNetworkSuccessfully(msg.getTitle());
-				}
+				if (queue.size() > 0) {
+					Message msg;
 					
+					synchronized (SocialNetworkService.this) {
+						msg = queue.poll();
+							
+						new MessageSharingTask().execute(msg);
+					}
+				}	
 				try {
 					Thread.sleep(1000);
 				} catch (InterruptedException e) {
 				}
+			}
+		}
+	}
+		
+	private class MessageSharingTask extends AsyncTask<Message, Void, Void> {
+		
+
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+			
+			Thread.currentThread().setName("MessageSharingTask");
+		}
+
+		@Override
+		protected Void doInBackground(Message... params) {
+			Message msg = params[0];
+			boolean successful = false;
+			
+			if (msg != null) {
+				try {
+					msg.setAttempts(msg.getAttempts() + 1);
+					
+					successful = sn.share(msg);
+				}
+				catch (Exception ex) {
+					successful = false;
+					
+					if (ex instanceof TwitterException) {
+						TwitterException te = (TwitterException) ex;
+						if (te.getErrorCode() == 186)  // over limit
+							msg.getStatus().shrinkToFit(Tweet.CHARACTER_NUMBER_TO_REMOVE);
+					}
+				}								
+
+				if (!successful) {
+					if (msg.getAttempts() <= ATTEMPTS_TO_TRY_BEFORE_GIVING_UP)
+						SocialNetworkService.this.addMessage(msg);
+					else {
+						if (listener != null)
+							listener.onOnShareToSocialNetworkError();
+					}
+				}
+				else 
+					if (listener != null)
+						listener.onOnShareToSocialNetworkSuccessfully(msg.getTitle());
 			}
 			return null;
 		}

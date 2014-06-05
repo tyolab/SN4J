@@ -32,7 +32,7 @@ public class Tweet implements Status {
 	
 	private String prefix;
 	
-	private String signature;
+	protected static String signature;
 	
 	private String url;
 	
@@ -40,26 +40,31 @@ public class Tweet implements Status {
 	
 	private boolean trimmed;
 	
+	static {
+		setSignature("");
+	}
+	
 	public Tweet() {
 		buffer = new StringBuffer();
 		limit = CHARACTER_LIMIT;
 		trimmed = false;
+		prefix = "";
+		url = "";
 	}
 	
 	public Tweet(String text) {
-		this(text, "", "", "");
+		this(text, "", "");
 	}
 	
-	public Tweet(String text, String prefix, String signature, String url) {
+	public Tweet(String text, String prefix, String url) {
 		this();
 		
 		this.prefix = prefix;
 		this.buffer.append(text);
-		this.signature = signature;
 		this.url = url;
 	}
 	
-	public void preOccupy(int howManyChars) {
+	public static void preOccupy(int howManyChars) {
 		limit -= howManyChars;
 		if (limit < 0)
 			limit = 0;
@@ -121,8 +126,8 @@ public class Tweet implements Status {
 	}
 
 	public void shrinkToFit(int number) {
-		int i = buffer.length() - 1;
-		for (; i > number; --i) {
+		int i = buffer.length() - 1; int target = i - number;
+		for (; i > target; --i) {
 			if (buffer.length() <= CHARCTERS_NUMBER_MINIMUM)
 				break;
 			buffer.deleteCharAt(i);
@@ -140,12 +145,12 @@ public class Tweet implements Status {
 		this.prefix = prefix;
 	}
 
-	public String getSignature() {
+	public static String getSignature() {
 		return signature;
 	}
 
-	public void setSignature(String signature) {
-		this.signature = signature;
+	public  static void setSignature(String signature) {
+		Tweet.signature = signature;
 	}
 	
 	private int getTextLengthShouldBe() {
@@ -173,6 +178,10 @@ public class Tweet implements Status {
 
 	@Override
 	public String getText() {
+		return toString();
+	}
+	
+	public String toTweet() {
 		return toString();
 	}
 }

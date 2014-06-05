@@ -155,7 +155,7 @@ public class SocialNetworkService extends Service {
 		protected Void doInBackground(Message... params) {
 			Message msg = params[0];
 			boolean successful = false;
-			
+			int resultCode = 0;
 			if (msg != null) {
 				try {
 					msg.setAttempts(msg.getAttempts() + 1);
@@ -167,13 +167,19 @@ public class SocialNetworkService extends Service {
 					
 					if (ex instanceof TwitterException) {
 						TwitterException te = (TwitterException) ex;
-						if (te.getErrorCode() == 186)  // over limit
+						resultCode = te.getErrorCode();
+						if (resultCode == 186)  // over limit
 							msg.getStatus().shrinkToFit(Tweet.CHARACTER_NUMBER_TO_REMOVE);
+						if (resultCode == 189 && msg.getImageUrl() != null) {
+							msg.removeImageUrl();
+							resultCode = 0;
+						}
 					}
 				}								
 
 				if (!successful) {
-					if (msg.getAttempts() <= ATTEMPTS_TO_TRY_BEFORE_GIVING_UP)
+					if (msg.getAttempts() <= ATTEMPTS_TO_TRY_BEFORE_GIVING_UP
+							&& resultCode != 189)
 						SocialNetworkService.this.addMessage(msg);
 					else {
 						if (listener != null)

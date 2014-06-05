@@ -89,4 +89,9 @@ public class MessageToShare implements Message {
 		return status.getText();
 	}
 
+	@Override
+	public void removeImageUrl() {
+		this.setImageUrl(null);
+	}
+
 }

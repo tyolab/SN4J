@@ -34,4 +34,5 @@ public interface Message {
 
 	String getUrl();
 
+	void removeImageUrl();
 }

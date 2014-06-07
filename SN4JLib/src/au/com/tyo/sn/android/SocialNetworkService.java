@@ -134,7 +134,7 @@ public class SocialNetworkService extends Service {
 					}
 				}	
 				try {
-					Thread.sleep(1000);
+					Thread.sleep(200);
 				} catch (InterruptedException e) {
 				}
 			}
@@ -170,8 +170,9 @@ public class SocialNetworkService extends Service {
 						resultCode = te.getErrorCode();
 						if (resultCode == 186)  // over limit
 							msg.getStatus().shrinkToFit(Tweet.CHARACTER_NUMBER_TO_REMOVE);
-						if (resultCode == 189 && msg.getImageUrl() != null) {
-							msg.removeImageUrl();
+						else {
+							if (msg.getImageUrl() != null) 
+								msg.removeImageUrl();
 							resultCode = 0;
 						}
 					}

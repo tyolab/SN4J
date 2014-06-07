@@ -34,7 +34,11 @@ public abstract class SNBase {
 	public SNBase(int type) {
 		this.type = type;
 		
-		setCallback(new Callback(String.valueOf(this.getType())));
+		setCallback(new Callback(getTypeString()));
+	}
+
+	public String getTypeString() {
+		return String.valueOf(this.getType());
 	}
 
 	public synchronized int getType() {

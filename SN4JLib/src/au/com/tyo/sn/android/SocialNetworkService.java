@@ -129,12 +129,14 @@ public class SocialNetworkService extends Service {
 					
 					synchronized (SocialNetworkService.this) {
 						msg = queue.poll();
-							
-						new MessageSharingTask().execute(msg);
+						if (sn.isServiceReady(msg.getSocialNetworkToShare()))
+							new MessageSharingTask().execute(msg);
+						else
+							SocialNetworkService.this.addMessage(msg);
 					}
 				}	
 				try {
-					Thread.sleep(200);
+					Thread.sleep(300);
 				} catch (InterruptedException e) {
 				}
 			}

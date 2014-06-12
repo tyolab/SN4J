@@ -30,9 +30,19 @@ import au.com.tyo.sn.SocialNetwork;
 
 public class LoginActivity extends Activity {
 	
+	public static interface LoginListener {
+		void onAppAuthorized();
+	}
+	
 	private static final String LOG_TAG = "LoginActivity";
 	
 	private int type = 0;
+	
+	private static LoginListener listener = null;
+	
+	public void setLoginListener(LoginListener listener) {
+		LoginActivity.listener = listener;
+	}
 
 	@SuppressLint("NewApi")
 	@Override
@@ -82,6 +92,9 @@ public class LoginActivity extends Activity {
         if (uri != null && callbackUrl.startsWith(sn.getCallback().getHomeUrl())) {	
             try {
 				sn.retrieveAccessToken(uri);
+				
+				if (listener != null)
+					listener.onAppAuthorized();
 			} catch (Exception e) {
 				e.printStackTrace();
 				Log.e(LOG_TAG, e.getLocalizedMessage() == null ? "Error in processing the twitter access token" : e.getLocalizedMessage());

@@ -109,4 +109,21 @@ public class SocialNetwork implements SocialNetworkConstants {
 		}
 		return sn;
 	}
+
+	public boolean isServiceReady(int socialNetworkToShare) {
+		// TODO 
+		// just TWITTER for now
+		SNBase sn = null;
+		if ((socialNetworkToShare & SocialNetwork.TWITTER) == SocialNetwork.TWITTER) {
+			sn = sns.get(SocialNetwork.TWITTER);
+			return checkSocialNetworkAvailability(sn);
+		}
+		return false;
+	}
+
+	private boolean checkSocialNetworkAvailability(SNBase sn) {
+		if (sn != null)
+			return sn.isAuthenticated();
+		return false;
+	}
 }

@@ -21,6 +21,8 @@ import au.com.tyo.sn.android.Callback;
 
 public abstract class SNBase {
 	
+	private static String appId = "sn4j";
+	
 	protected Secrets secrets;
 	
 	protected int type;
@@ -35,6 +37,14 @@ public abstract class SNBase {
 		this.type = type;
 		
 		setCallback(new Callback(getTypeString()));
+	}
+	
+	public static void setAppId(String name) {
+		appId = name;
+	}
+	
+	public static String getAppId() {
+		return appId;
 	}
 
 	public String getTypeString() {
@@ -82,5 +92,5 @@ public abstract class SNBase {
 		return false;
 	}
 	
-	public abstract void addPeopleInNetwork(String name) throws Exception;
+	public abstract void addPeopleInNetwork() throws Exception;
 }

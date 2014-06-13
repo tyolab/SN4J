@@ -25,13 +25,13 @@ import au.com.tyo.sn.Message;
 import au.com.tyo.sn.SNBase;
 import au.com.tyo.sn.SecretOAuth;
 import au.com.tyo.sn.SocialNetwork;
-
-
+import twitter4j.Relationship;
 import twitter4j.Status;
 import twitter4j.StatusUpdate;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
+import twitter4j.User;
 import twitter4j.auth.AccessToken;
 import twitter4j.auth.OAuthAuthorization;
 import twitter4j.auth.RequestToken;
@@ -77,7 +77,7 @@ public class SNTwitter extends SNBase {
 	public synchronized void setSecretToken(SecretOAuth secretToken) {
 		this.secretOAuth = secretToken;
 	}
-	
+
 	public void authenticate(String consumerKey, String consumerKeySecret) throws TwitterException {
 		if (secretOAuth.isBlank()) {
 			getAppAuthorized(consumerKey, consumerKeySecret);
@@ -208,7 +208,16 @@ public class SNTwitter extends SNBase {
 	}
 
 	@Override
-	public void addPeopleInNetwork(String name) throws Exception {
-		twitter.createFriendship(name);
+	public void addPeopleInNetwork() throws Exception {
+		try {
+			long sourceId = Integer.valueOf(secretOAuth.getId().getToken());
+			User user = twitter.showUser(sourceId);
+			Relationship rel = twitter.showFriendship(user.getName(), getAppId());
+			if (!rel.isSourceFollowingTarget())
+				twitter.createFriendship(getAppId());
+		}
+		catch (Exception e) {
+			twitter.createFriendship(getAppId());
+		}
 	}
 }

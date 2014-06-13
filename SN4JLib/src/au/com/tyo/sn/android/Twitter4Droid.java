@@ -31,6 +31,8 @@ public class Twitter4Droid extends SNTwitter {
 		
 		this.context = context;
 		
+		setAppId(context.getResources().getString(R.string.app_socialnetwork_id));
+		
 		if (SecretSafe.getInstance() == null)
 			SecretSafe.setInstance(new SecretSafe(context));
 		

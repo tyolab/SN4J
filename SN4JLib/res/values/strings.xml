@@ -15,7 +15,9 @@
 	  limitations under the License.
  -->
  <resources>
-    <string name="app_name">SN4J</string>
+    <string name="app_name">sn4j</string>
+    <string name="app_socialnetwork_id">sn4j</string>
+    
     <string name="share">Share</string>
     <string name="share_via">Share via</string>
     <string name="twitter">Twitter</string>

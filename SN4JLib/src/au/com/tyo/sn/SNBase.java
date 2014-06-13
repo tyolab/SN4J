@@ -77,4 +77,10 @@ public abstract class SNBase {
 	public abstract void authenticate() throws Exception;
 
 	public abstract void postStatus(Message msg) throws Exception;
+
+	public boolean hasSecret() {
+		return false;
+	}
+	
+	public abstract void addPeopleInNetwork(String name) throws Exception;
 }

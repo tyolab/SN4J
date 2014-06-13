@@ -16,6 +16,8 @@
 
 package au.com.tyo.sn;
 
+import java.util.Map;
+
 public interface SocialNetworkConstants {
 	
 	public static final int ANY = 0;
@@ -74,4 +76,5 @@ public interface SocialNetworkConstants {
 																					GOOGLE_PLUS, 
 																					LINKED_IN
 																				};
+	
 }

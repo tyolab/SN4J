@@ -16,6 +16,7 @@
 
 package au.com.tyo.sn;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -25,6 +26,16 @@ import au.com.tyo.sn.twitter.SNTwitter;
 public class SocialNetwork implements SocialNetworkConstants {
 	
 //	private SNTwitter twitter;
+	public static final Map<Integer, String> SOCIAL_NETWORKS;
+	
+	static {
+		Map<Integer, String> snMap = new HashMap<Integer, String>();
+		snMap.put(TWITTER, TWITTER_STR);
+		snMap.put(FACEBOOK, FACEBOOK_STR);
+		snMap.put(GOOGLE_PLUS, GOOGLE_PLUS_STR);
+		snMap.put(LINKED_IN, LINKED_IN_STR);
+		SOCIAL_NETWORKS = Collections.unmodifiableMap(snMap);
+	}
 	
 	private LinkedList<Message> queue; 
 	

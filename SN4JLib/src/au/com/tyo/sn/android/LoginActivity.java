@@ -31,14 +31,14 @@ import au.com.tyo.sn.SocialNetwork;
 public class LoginActivity extends Activity {
 	
 	public static interface LoginListener {
-		void onAppAuthorized();
+		void onAppAuthorized(int type);
 	}
 	
 	private static final String LOG_TAG = "LoginActivity";
 	
 	private int type = 0;
 	
-	private static LoginListener listener = null;
+	public static LoginListener listener = null;
 	
 	public void setLoginListener(LoginListener listener) {
 		LoginActivity.listener = listener;
@@ -93,8 +93,8 @@ public class LoginActivity extends Activity {
             try {
 				sn.retrieveAccessToken(uri);
 				
-				if (listener != null)
-					listener.onAppAuthorized();
+				if (sn.hasSecret() && listener != null)
+					listener.onAppAuthorized(type);
 			} catch (Exception e) {
 				e.printStackTrace();
 				Log.e(LOG_TAG, e.getLocalizedMessage() == null ? "Error in processing the twitter access token" : e.getLocalizedMessage());

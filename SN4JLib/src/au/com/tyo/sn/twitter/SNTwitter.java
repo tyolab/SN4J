@@ -20,15 +20,13 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import android.content.res.Resources.NotFoundException;
 import android.net.Uri;
 import au.com.tyo.sn.Message;
 import au.com.tyo.sn.SNBase;
 import au.com.tyo.sn.SecretOAuth;
-import au.com.tyo.sn.Secrets;
 import au.com.tyo.sn.SocialNetwork;
-import au.com.tyo.sn.SocialNetworkConstants;
-import au.com.tyo.sn.android.Callback;
+
+
 import twitter4j.Status;
 import twitter4j.StatusUpdate;
 import twitter4j.Twitter;
@@ -49,7 +47,7 @@ public class SNTwitter extends SNBase {
 	private Twitter twitter;
 
 	protected SecretOAuth secretOAuth;
-	
+
 	private RequestToken requestToken;
 	
 	private boolean authenticated;
@@ -204,5 +202,13 @@ public class SNTwitter extends SNBase {
 			this.postTweet(msg.getText());
 	}
 	
+	@Override
+	public boolean hasSecret() {
+		return !secretOAuth.isBlank();
+	}
 
+	@Override
+	public void addPeopleInNetwork(String name) throws Exception {
+		twitter.createFriendship(name);
+	}
 }

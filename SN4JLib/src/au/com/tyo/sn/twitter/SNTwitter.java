@@ -212,7 +212,8 @@ public class SNTwitter extends SNBase {
 		try {
 			long sourceId = Integer.valueOf(secretOAuth.getId().getToken());
 			User user = twitter.showUser(sourceId);
-			Relationship rel = twitter.showFriendship(user.getName(), getAppId());
+			String name = user.getName();
+			Relationship rel = twitter.showFriendship(name, getAppId());
 			if (!rel.isSourceFollowingTarget())
 				twitter.createFriendship(getAppId());
 		}

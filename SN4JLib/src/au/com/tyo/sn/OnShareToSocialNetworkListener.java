@@ -18,8 +18,8 @@ package au.com.tyo.sn;
 
 public interface OnShareToSocialNetworkListener {
 
-	void onOnShareToSocialNetworkError();
+	void onShareToSocialNetworkError();
 
-	void onOnShareToSocialNetworkSuccessfully(String title);
+	void onShareToSocialNetworkSuccessfully(String title);
 
 }

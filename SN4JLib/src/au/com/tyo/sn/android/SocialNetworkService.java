@@ -186,12 +186,12 @@ public class SocialNetworkService extends Service {
 						SocialNetworkService.this.addMessage(msg);
 					else {
 						if (listener != null)
-							listener.onOnShareToSocialNetworkError();
+							listener.onShareToSocialNetworkError();
 					}
 				}
 				else 
 					if (listener != null)
-						listener.onOnShareToSocialNetworkSuccessfully(msg.getTitle());
+						listener.onShareToSocialNetworkSuccessfully(msg.getTitle());
 			}
 			return null;
 		}

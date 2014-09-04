@@ -17,38 +17,27 @@
 package au.com.tyo.sn;
 
 /*
- * The secret for storing the access token and token secret
+ * although user info is not considered secret, but we use it for caching the user id and image 
  */
-public class SecretOAuth  {
+public class UserInfo extends SecretBase {
 	
-	private SecretBase id;  // for storing the user id and avatar;
+	public UserInfo(int type) {
+		super(type, SocialNetworkConstants.INFORMATION_USER_PROFILE);
+	}
+
+	public String getName() {
+		return this.getToken();
+	}
 	
-	private SecretBase token;
-
-	public SecretOAuth(int type) {
-		setToken(new SecretBase(type, 
-				SocialNetworkConstants.INFORMATION_OAUTH_ACCESS_TOKEN));
-		setId(new SecretBase(type, 
-				SocialNetworkConstants.INFORMATION_OAUTH_ID));
+	public String getBase64EncodedImage() {
+		return this.getSecret();
 	}
 
-	public SecretBase getId() {
-		return id;
+	public void setName(String userName) {
+		this.setToken(userName);
 	}
-
-	public void setId(SecretBase id) {
-		this.id = id;
-	}
-
-	public SecretBase getToken() {
-		return token;
-	}
-
-	public void setToken(SecretBase token) {
-		this.token = token;
-	}
-
-	public boolean isBlank() {
-		return token.isBlank();
+	
+	public void setBase64EncodedImage() {
+		
 	}
 }

@@ -24,70 +24,11 @@ public class SecretSafe extends StoredSecrets {
 	
 	private SecretOnDroid storedSecret;
 	
-//	private SharedPreferences prefs;
-	
 	public SecretSafe(Context context) {
 		super();
 		
 		storedSecret = new SecretOnDroid(context);
-		
-//		prefs = PreferenceManager.getDefaultSharedPreferences(context);
-		
-//		String value = prefs.getString(PREF_STORED_SECRET_TYPES, "");
-//		
-//		if (value != null && value.trim().length() > 0) {
-//			String[] tokens = value.split(",");
-//			
-//			if (tokens != null && tokens.length > 0) {
-//				types = new int[tokens.length];
-//				int count = 0;
-//				for (String token : tokens) {
-//					if (token.trim().length() == 0)
-//						continue;
-//					types[count++] = Integer.valueOf(token);
-//				}
-//			}
-//		}
-		
-//		load();
 	}
-
-//	public void load() {
-//		if (types != null)
-//			for (int type : types) {
-//				Secret secret = null;
-//				switch (type) {
-//					case SocialNetworkConstants.TWITTER:			
-//						secret = new SecretTwitter(SocialNetworkConstants.AUTHENTICATION_OAUTH_ACCESS_TOKEN);
-//						storedSecret.load(secret);
-//						break;
-//					case SocialNetworkConstants.FACEBOOK:					
-//					case SocialNetworkConstants.GOOGLE_PLUS:
-//					case SocialNetworkConstants.LINKED_IN:
-////						secret1 = new SecretBase(type, SocialNetwork.AUTHENTICATION_OAUTH_CONSUMER);
-//						secret = new SecretBase(type, SocialNetworkConstants.AUTHENTICATION_OAUTH_ACCESS_TOKEN);
-//						break;	
-//					case SocialNetworkConstants.ANY:
-//					default:
-//						secret = new SecretBase(type);
-//						break;
-//				}
-//				
-//				this.add(secret);
-//			}
-//	}
-//
-//	public void save() {
-//		SharedPreferences.Editor editor = prefs.edit();
-//		
-//		editor.putString(PREF_STORED_SECRET_TYPES, typesToString());
-//		
-//		editor.commit();
-//		
-//		Collection<Secret> set = getSecrets().values();
-//		for (Secret secret : set) 
-//			save(secret);
-//	}
 	
 	public void load(Secret secret) {
 		storedSecret.load(secret);

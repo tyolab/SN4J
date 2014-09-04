@@ -38,7 +38,7 @@ public class SecretBase implements Secret {
 		this.setToken(token);
 		this.setSecret(secret);		
 		this.typeSn = SocialNetworkConstants.ANY;
-		this.typeAuth = SocialNetworkConstants.AUTHENTICATION_ANY;
+		this.typeAuth = SocialNetworkConstants.INFORMATION_ANY;
 	}
 
 	public SecretBase(int type, String token, String secret) {

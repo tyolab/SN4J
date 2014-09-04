@@ -29,6 +29,12 @@ public abstract class SNBase {
 	
 	private Callback callback;
 	
+	protected SecretOAuth secretOAuth;
+	
+	protected UserInfo userInfo;
+	
+	protected String userProfileImageUrl;
+	
 	public SNBase() {
 		this(SocialNetwork.ANY);
 	}
@@ -37,6 +43,9 @@ public abstract class SNBase {
 		this.type = type;
 		
 		setCallback(new Callback(getTypeString()));
+		
+		secretOAuth = new SecretOAuth(SocialNetwork.ANY);
+		userInfo = new UserInfo(SocialNetwork.ANY);
 	}
 	
 	public static void setAppId(String name) {
@@ -74,10 +83,35 @@ public abstract class SNBase {
 	public void setCallback(Callback callback) {
 		this.callback = callback;
 	}
+
+	public String getCachedName() {
+		return userInfo.getName();
+	}
+
+	public String getCachedImage() {
+		return userInfo.getBase64EncodedImage();
+	}
 	
-	public abstract void loadSecretsFromSafe();
+	public UserInfo getUserInfo() {
+		return userInfo;
+	}
+
+	public void loadSecretsFromSafe() {
+		if (secrets != null) {
+			secrets.load(secretOAuth.getId());
+			secrets.load(secretOAuth.getToken());
+			secrets.load(userInfo);
+		}
+	}
+
+	public void saveAuthSecrets() {
+		secrets.save(secretOAuth.getToken());
+		secrets.save(secretOAuth.getId());
+	}
 	
-	public abstract void saveSecretsToSafe();
+	public void saveUserInfo() {
+		secrets.save(userInfo);
+	}
 
 	public abstract void retrieveAccessToken(Uri uri)
 			throws Exception;

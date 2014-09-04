@@ -25,6 +25,7 @@ import au.com.tyo.sn.Message;
 import au.com.tyo.sn.SNBase;
 import au.com.tyo.sn.SecretOAuth;
 import au.com.tyo.sn.SocialNetwork;
+import au.com.tyo.sn.UserInfo;
 import twitter4j.Relationship;
 import twitter4j.Status;
 import twitter4j.StatusUpdate;
@@ -46,11 +47,11 @@ public class SNTwitter extends SNBase {
 	
 	private Twitter twitter;
 
-	protected SecretOAuth secretOAuth;
-
 	private RequestToken requestToken;
 	
 	private boolean authenticated;
+	
+	private User user;
 	
 	public SNTwitter() {
 		super(SocialNetwork.TWITTER);
@@ -58,8 +59,11 @@ public class SNTwitter extends SNBase {
 		this.authenticated = false;
 		
 		secretOAuth = new SecretOAuth(SocialNetwork.TWITTER);
+		userInfo = new UserInfo(SocialNetwork.TWITTER);
 		
 		requestToken = null;
+		
+		user = null;
 	}
 	
 //	public synchronized SecretOAuth getSecretId() {
@@ -97,6 +101,11 @@ public class SNTwitter extends SNBase {
         OAuthAuthorization auth = new OAuthAuthorization(conf);
         twitter = new TwitterFactory().getInstance(auth); 
         authenticated = true;
+		long sourceId = Integer.valueOf(secretOAuth.getId().getToken());
+		user = twitter.showUser(sourceId);
+		
+		userInfo.setName(getUserName());
+		this.userProfileImageUrl = this.getUserAvatarUrl();
 	}
 
 	public void getAppAuthorized(String consumerKey, String consumerKeySecret) throws TwitterException {
@@ -177,22 +186,6 @@ public class SNTwitter extends SNBase {
 	}
 
 	@Override
-	public void loadSecretsFromSafe() {
-		if (secrets != null) {
-			secrets.load(secretOAuth.getId());
-			secrets.load(secretOAuth.getToken());
-		}
-	}
-
-	@Override
-	public void saveSecretsToSafe() {
-		if (secretOAuth != null) {
-			secrets.save(secretOAuth.getToken());
-			secrets.save(secretOAuth.getId());
-		}
-	}
-
-	@Override
 	public void postStatus(Message msg) throws Exception {
 		if (msg.getImageUrl() != null && msg.getImageUrl().length() > 0)
 			this.postTweetWithImage(msg.getTitle(), msg.getImageUrl(), msg.getText());
@@ -210,8 +203,6 @@ public class SNTwitter extends SNBase {
 	@Override
 	public void addPeopleInNetwork() throws Exception {
 		try {
-			long sourceId = Integer.valueOf(secretOAuth.getId().getToken());
-			User user = twitter.showUser(sourceId);
 			String name = user.getName();
 			Relationship rel = twitter.showFriendship(name, getAppId());
 			if (!rel.isSourceFollowingTarget())
@@ -221,4 +212,13 @@ public class SNTwitter extends SNBase {
 			twitter.createFriendship(getAppId());
 		}
 	}
+	
+	public String getUserName() {
+		return user == null ? null : user.getName();
+	}
+	
+	public String getUserAvatarUrl() {
+		return user == null ? null : user.getProfileImageURL();
+	}	
+	
 }

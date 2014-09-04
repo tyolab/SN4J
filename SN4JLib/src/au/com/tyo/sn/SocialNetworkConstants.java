@@ -65,10 +65,11 @@ public interface SocialNetworkConstants {
 																					GMAIL_STR
 																				};
 	
-	public static final int AUTHENTICATION_ANY = -1;
-	public static final int AUTHENTICATION_PASSWORD = 0;
-	public static final int AUTHENTICATION_OAUTH_ID = 1;
-	public static final int AUTHENTICATION_OAUTH_ACCESS_TOKEN = 2;
+	public static final int INFORMATION_ANY = -1;
+	public static final int INFORMATION_PASSWORD = 0;
+	public static final int INFORMATION_OAUTH_ID = 1;
+	public static final int INFORMATION_OAUTH_ACCESS_TOKEN = 2;
+	public static final int INFORMATION_USER_PROFILE = 3;
 	
 	public static final int[] SUPPORTED_SOCIAL_NETWORKS = {
 																					TWITTER, 

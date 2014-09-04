@@ -20,6 +20,7 @@ import twitter4j.TwitterException;
 import android.content.Context;
 import android.content.res.Resources.NotFoundException;
 import au.com.tyo.sn.R;
+import au.com.tyo.sn.Secrets;
 import au.com.tyo.sn.twitter.SNTwitter;
 
 public class Twitter4Droid extends SNTwitter {
@@ -33,15 +34,16 @@ public class Twitter4Droid extends SNTwitter {
 		
 		setAppId(context.getResources().getString(R.string.app_socialnetwork_id));
 		
-		if (SecretSafe.getInstance() == null)
-			SecretSafe.setInstance(new SecretSafe(context));
+		secrets = SecretSafe.getInstance();
 		
-		this.setSecretSafe(SecretSafe.getInstance());
+		if (secrets == null)
+			SecretSafe.setInstance((secrets = new SecretSafe(context)));
 		
 		this.loadSecretsFromSafe();
 		
-		SecretSafe.getInstance().load(this.secretOAuth.getId());
-		SecretSafe.getInstance().load(this.secretOAuth.getToken());
+//		secrets.load(this.secretOAuth.getId());
+//		secrets.load(this.secretOAuth.getToken());
+//		secrets.load(userInfo);
 	}
 	
 	public void authenticate() throws NotFoundException, TwitterException {
@@ -52,5 +54,12 @@ public class Twitter4Droid extends SNTwitter {
 	@Override
 	protected void openAuthorizationURL(String authorizationUrl) {
 		TwitterAuthorizationActivity.startTwitterAuthorizationActivity(context, authorizationUrl);
+	}
+	
+	@Override
+	public void authenticate(String consumerKey, String consumerKeySecret) throws TwitterException {
+		super.authenticate(consumerKey, consumerKeySecret);
+		
+		
 	}
 }

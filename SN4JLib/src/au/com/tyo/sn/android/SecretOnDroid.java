@@ -68,7 +68,7 @@ public class SecretOnDroid {
 		secret.setToken(prefs.getString(prefTokenStr, ""));
 		secret.setSecret(prefs.getString(prefSecretStr, ""));
 //		secret.setType(prefs.getInt(PREF_STORED_SECRET_TYPE, SocialNetwork.ANY));
-//		secret.setTypeAuth(prefs.getInt(PREF_STORED_SECRET_AUTH_TYPE, SocialNetwork.AUTHENTICATION_ANY));
+//		secret.setTypeAuth(prefs.getInt(PREF_STORED_SECRET_AUTH_TYPE, SocialNetwork.INFORMATION_ANY));
 	}
 
 	public void save(Secret secret) {

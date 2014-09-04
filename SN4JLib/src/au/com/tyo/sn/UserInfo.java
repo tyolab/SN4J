@@ -37,7 +37,7 @@ public class UserInfo extends SecretBase {
 		this.setToken(userName);
 	}
 	
-	public void setBase64EncodedImage() {
-		
+	public void setBase64EncodedImage(String encodedImage) {
+		this.setSecret(encodedImage);
 	}
 }

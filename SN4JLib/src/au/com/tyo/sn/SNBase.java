@@ -112,6 +112,10 @@ public abstract class SNBase {
 	public void saveUserInfo() {
 		secrets.save(userInfo);
 	}
+	
+	public abstract String getUserName();
+	
+	public abstract String getUserAvatarUrl();
 
 	public abstract void retrieveAccessToken(Uri uri)
 			throws Exception;

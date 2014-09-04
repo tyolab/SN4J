@@ -55,11 +55,5 @@ public class Twitter4Droid extends SNTwitter {
 	protected void openAuthorizationURL(String authorizationUrl) {
 		TwitterAuthorizationActivity.startTwitterAuthorizationActivity(context, authorizationUrl);
 	}
-	
-	@Override
-	public void authenticate(String consumerKey, String consumerKeySecret) throws TwitterException {
-		super.authenticate(consumerKey, consumerKeySecret);
-		
-		
-	}
+
 }

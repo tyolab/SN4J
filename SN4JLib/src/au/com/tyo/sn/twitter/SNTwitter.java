@@ -64,6 +64,7 @@ public class SNTwitter extends SNBase {
 		requestToken = null;
 		
 		user = null;
+		twitter = null;
 	}
 	
 //	public synchronized SecretOAuth getSecretId() {
@@ -81,6 +82,36 @@ public class SNTwitter extends SNBase {
 	public synchronized void setSecretToken(SecretOAuth secretToken) {
 		this.secretOAuth = secretToken;
 	}
+	
+	protected void createTwitterInstance() {
+		try {
+			if (!secretOAuth.getToken().isBlank()) {
+				AccessToken accessToken = new AccessToken(secretOAuth.getToken().getToken(), 
+						secretOAuth.getToken().getSecret());
+				
+		        Configuration conf = new ConfigurationBuilder()
+		                .setOAuthConsumerKey(consumerKey)
+		                .setOAuthConsumerSecret(consumerKeySecret)
+		                .setOAuthAccessToken(accessToken.getToken())
+		                .setOAuthAccessTokenSecret(accessToken.getTokenSecret())
+		                .build();
+		
+		        OAuthAuthorization auth = new OAuthAuthorization(conf);
+		        twitter = new TwitterFactory().getInstance(auth); 
+		        authenticated = true;
+				long sourceId = Integer.valueOf(secretOAuth.getId().getToken());
+				user = twitter.showUser(sourceId);
+				
+				userInfo.setName(getUserName());
+				userProfileImageUrl = getUserAvatarUrl();
+			}
+		}
+		catch (Exception ex) {
+			authenticated = false;
+			twitter = null;
+			user = null;
+		}
+	}
 
 	public void authenticate(String consumerKey, String consumerKeySecret) throws TwitterException {
 		if (secretOAuth.isBlank()) {
@@ -88,24 +119,7 @@ public class SNTwitter extends SNBase {
 			return;
 		}
 		
-		AccessToken accessToken = new AccessToken(secretOAuth.getToken().getToken(), 
-				secretOAuth.getToken().getSecret());
-		
-        Configuration conf = new ConfigurationBuilder()
-                .setOAuthConsumerKey(consumerKey)
-                .setOAuthConsumerSecret(consumerKeySecret)
-                .setOAuthAccessToken(accessToken.getToken())
-                .setOAuthAccessTokenSecret(accessToken.getTokenSecret())
-                .build();
-
-        OAuthAuthorization auth = new OAuthAuthorization(conf);
-        twitter = new TwitterFactory().getInstance(auth); 
-        authenticated = true;
-		long sourceId = Integer.valueOf(secretOAuth.getId().getToken());
-		user = twitter.showUser(sourceId);
-		
-		userInfo.setName(getUserName());
-		this.userProfileImageUrl = this.getUserAvatarUrl();
+		createTwitterInstance();
 	}
 
 	public void getAppAuthorized(String consumerKey, String consumerKeySecret) throws TwitterException {

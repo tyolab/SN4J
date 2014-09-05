@@ -35,6 +35,10 @@ public abstract class SNBase {
 	
 	protected String userProfileImageUrl;
 	
+	protected String consumerKey;
+	
+	protected String consumerKeySecret;
+	
 	public SNBase() {
 		this(SocialNetwork.ANY);
 	}
@@ -46,6 +50,9 @@ public abstract class SNBase {
 		
 		secretOAuth = new SecretOAuth(SocialNetwork.ANY);
 		userInfo = new UserInfo(SocialNetwork.ANY);
+		
+		consumerKey = "";
+		consumerKeySecret = "";
 	}
 	
 	public static void setAppId(String name) {
@@ -111,6 +118,10 @@ public abstract class SNBase {
 	
 	public void saveUserInfo() {
 		secrets.save(userInfo);
+	}
+	
+	public boolean hasConsumerKeyPair() {
+		return consumerKey.length() > 0 && consumerKeySecret.length() > 0;
 	}
 	
 	public abstract String getUserName();

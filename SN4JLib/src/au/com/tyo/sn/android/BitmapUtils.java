@@ -24,9 +24,12 @@ import java.net.URL;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.util.Log;
 
 public class BitmapUtils {
 	
+	private static final String LOG_TAG = "BitmapUtils";
+
 	public static Bitmap getBitmapFromURL(String urlStr) {
 		Bitmap bitmap = null;
 	    try {
@@ -39,6 +42,7 @@ public class BitmapUtils {
 	        InputStream input = connection.getInputStream();
 	        bitmap = BitmapFactory.decodeStream(input);
 	    } catch (IOException e) {
+	    	Log.e(LOG_TAG, "cannot get the image from link :" + urlStr);
 	    }
         return bitmap;
 	}

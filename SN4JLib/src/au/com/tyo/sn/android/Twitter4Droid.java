@@ -19,11 +19,15 @@ package au.com.tyo.sn.android;
 import twitter4j.TwitterException;
 import android.content.Context;
 import android.content.res.Resources.NotFoundException;
+import android.graphics.Bitmap;
+import android.util.Base64;
+import android.util.Log;
 import au.com.tyo.sn.R;
-import au.com.tyo.sn.Secrets;
 import au.com.tyo.sn.twitter.SNTwitter;
 
 public class Twitter4Droid extends SNTwitter {
+	
+	public static final String LOG_TAG = "Twitter4Droid";
 	
 	private Context context;
 	
@@ -34,6 +38,10 @@ public class Twitter4Droid extends SNTwitter {
 		
 		setAppId(context.getResources().getString(R.string.app_socialnetwork_id));
 		
+		consumerKey = context.getResources().getString(R.string.oauth_key_twitter);
+		
+		consumerKeySecret = context.getResources().getString(R.string.oauth_secret_twitter);
+		
 		secrets = SecretSafe.getInstance();
 		
 		if (secrets == null)
@@ -41,19 +49,41 @@ public class Twitter4Droid extends SNTwitter {
 		
 		this.loadSecretsFromSafe();
 		
-//		secrets.load(this.secretOAuth.getId());
-//		secrets.load(this.secretOAuth.getToken());
-//		secrets.load(userInfo);
+		this.createTwitterInstance();
 	}
 	
-	public void authenticate() throws NotFoundException, TwitterException {
-		authenticate(context.getResources().getString(R.string.oauth_key_twitter), 
-				context.getResources().getString(R.string.oauth_secret_twitter));
+	public void authenticate() throws NotFoundException, TwitterException {	
+		authenticate(consumerKey, consumerKeySecret);
 	}
 	
 	@Override
 	protected void openAuthorizationURL(String authorizationUrl) {
 		TwitterAuthorizationActivity.startTwitterAuthorizationActivity(context, authorizationUrl);
+	}
+
+	@Override
+	protected void createTwitterInstance() {
+		/*
+		 * Android doesn't like accessing the network from main thread 
+		 */
+		new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				Twitter4Droid.super.createTwitterInstance();
+				
+				if (Twitter4Droid.this.userProfileImageUrl != null)  {
+					Bitmap bitmap = BitmapUtils.getBitmapFromURL(Twitter4Droid.this.userProfileImageUrl);
+					if (bitmap != null) {
+						String encodedImage = new String(Base64.encode(BitmapUtils.bitmapToBytes(bitmap), Base64.DEFAULT));
+						getUserInfo().setBase64EncodedImage(encodedImage);
+						saveUserInfo();
+					}
+				}
+			}
+			
+		}).start();
+		
 	}
 
 }

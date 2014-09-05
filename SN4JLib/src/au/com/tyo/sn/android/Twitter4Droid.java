@@ -49,7 +49,7 @@ public class Twitter4Droid extends SNTwitter {
 		
 		this.loadSecretsFromSafe();
 		
-		this.createTwitterInstance();
+		this.createInstance();
 	}
 	
 	public void authenticate() throws NotFoundException, TwitterException {	
@@ -62,7 +62,7 @@ public class Twitter4Droid extends SNTwitter {
 	}
 
 	@Override
-	protected void createTwitterInstance() {
+	public void createInstance() {
 		/*
 		 * Android doesn't like accessing the network from main thread 
 		 */
@@ -70,7 +70,7 @@ public class Twitter4Droid extends SNTwitter {
 
 			@Override
 			public void run() {
-				Twitter4Droid.super.createTwitterInstance();
+				Twitter4Droid.super.createInstance();
 				
 				if (Twitter4Droid.this.userProfileImageUrl != null)  {
 					Bitmap bitmap = BitmapUtils.getBitmapFromURL(Twitter4Droid.this.userProfileImageUrl);

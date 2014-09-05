@@ -16,6 +16,7 @@
 
 package au.com.tyo.sn;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -136,5 +137,9 @@ public class SocialNetwork implements SocialNetworkConstants {
 		if (sn != null)
 			return sn.isAuthenticated();
 		return false;
+	}
+	
+	public Collection<SNBase> getSocialNetworkList() {
+		return sns.values(); 
 	}
 }

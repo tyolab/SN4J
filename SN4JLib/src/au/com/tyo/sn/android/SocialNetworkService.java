@@ -16,6 +16,7 @@
 
 package au.com.tyo.sn.android;
 
+import java.util.Collection;
 import java.util.LinkedList;
 
 import twitter4j.TwitterException;
@@ -29,6 +30,7 @@ import android.os.Binder;
 import android.os.IBinder;
 import au.com.tyo.sn.Message;
 import au.com.tyo.sn.OnShareToSocialNetworkListener;
+import au.com.tyo.sn.SNBase;
 import au.com.tyo.sn.SocialNetwork;
 import au.com.tyo.sn.twitter.Tweet;
 
@@ -49,6 +51,8 @@ public class SocialNetworkService extends Service {
     private SocialNetwork sn;
 	
 	private OnShareToSocialNetworkListener listener;
+	
+	private boolean hasNetwork;
 
 	public class SocialNetworkBinder extends Binder {
         public SocialNetworkService getService() {
@@ -88,6 +92,8 @@ public class SocialNetworkService extends Service {
 		listener = null;
 		
 		sn = SocialNetwork.getInstance();
+		
+		hasNetwork = true; //assuming has it
 		
 //		new  MessageHandlingTask().execute();
 		new Thread(new MessageHandlingTask()).start();
@@ -196,5 +202,16 @@ public class SocialNetworkService extends Service {
 			return null;
 		}
 		
+	}
+	
+	public void onNetworkOnline() {
+		hasNetwork = true;
+		for (SNBase one : sn.getSocialNetworkList()) {
+			one.createInstance();
+		}
+	}
+	
+	public void onNetworkOffline() {
+		hasNetwork = false;
 	}
 }

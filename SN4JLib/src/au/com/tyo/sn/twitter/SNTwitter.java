@@ -83,33 +83,38 @@ public class SNTwitter extends SNBase {
 		this.secretOAuth = secretToken;
 	}
 	
-	protected void createTwitterInstance() {
-		try {
-			if (!secretOAuth.getToken().isBlank()) {
-				AccessToken accessToken = new AccessToken(secretOAuth.getToken().getToken(), 
-						secretOAuth.getToken().getSecret());
-				
-		        Configuration conf = new ConfigurationBuilder()
-		                .setOAuthConsumerKey(consumerKey)
-		                .setOAuthConsumerSecret(consumerKeySecret)
-		                .setOAuthAccessToken(accessToken.getToken())
-		                .setOAuthAccessTokenSecret(accessToken.getTokenSecret())
-		                .build();
-		
-		        OAuthAuthorization auth = new OAuthAuthorization(conf);
-		        twitter = new TwitterFactory().getInstance(auth); 
-		        authenticated = true;
-				long sourceId = Integer.valueOf(secretOAuth.getId().getToken());
-				user = twitter.showUser(sourceId);
-				
-				userInfo.setName(getUserName());
-				userProfileImageUrl = getUserAvatarUrl();
+	public void createInstance() {
+		synchronized(this) {
+			try {	
+				if (twitter == null && !secretOAuth.getToken().isBlank()) {
+					AccessToken accessToken = new AccessToken(secretOAuth.getToken().getToken(), 
+							secretOAuth.getToken().getSecret());
+					
+			        Configuration conf = new ConfigurationBuilder()
+			                .setOAuthConsumerKey(consumerKey)
+			                .setOAuthConsumerSecret(consumerKeySecret)
+			                .setOAuthAccessToken(accessToken.getToken())
+			                .setOAuthAccessTokenSecret(accessToken.getTokenSecret())
+			                .build();
+			
+			        OAuthAuthorization auth = new OAuthAuthorization(conf);
+			        twitter = new TwitterFactory().getInstance(auth); 
+			        authenticated = true;
+					long sourceId = Integer.valueOf(secretOAuth.getId().getToken());
+					user = twitter.showUser(sourceId);
+					
+					secretOAuth.getId().setToken(user.getScreenName());
+					secrets.save(secretOAuth.getId());
+					
+					userInfo.setName(user.getName());
+					userProfileImageUrl = getUserAvatarUrl();
+				}
 			}
-		}
-		catch (Exception ex) {
-			authenticated = false;
-			twitter = null;
-			user = null;
+			catch (Exception ex) {
+				authenticated = false;
+				twitter = null;
+				user = null;
+			}
 		}
 	}
 
@@ -119,7 +124,7 @@ public class SNTwitter extends SNBase {
 			return;
 		}
 		
-		createTwitterInstance();
+		createInstance();
 	}
 
 	public void getAppAuthorized(String consumerKey, String consumerKeySecret) throws TwitterException {
@@ -190,7 +195,7 @@ public class SNTwitter extends SNBase {
 
         AccessToken accessToken = t.getOAuthAccessToken(this.requestToken, verifier);
         
-        secretOAuth.getId().setToken(String.valueOf(accessToken.getUserId()));
+        secretOAuth.getId().setToken(String.valueOf(accessToken.getScreenName()));
         
         secretOAuth.getToken().setToken(accessToken.getToken());
         secretOAuth.getToken().setSecret(accessToken.getTokenSecret());
@@ -228,11 +233,16 @@ public class SNTwitter extends SNBase {
 	}
 	
 	public String getUserName() {
-		return user == null ? null : user.getName();
+		return user == null ? this.getCachedAlias() : user.getScreenName();
 	}
 	
 	public String getUserAvatarUrl() {
 		return user == null ? null : user.getProfileImageURL();
+	}
+
+	@Override
+	public String getUserAlias() {
+		return user == null ? this.getCachedName() : user.getName();
 	}	
 	
 }

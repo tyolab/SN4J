@@ -91,8 +91,12 @@ public abstract class SNBase {
 		this.callback = callback;
 	}
 
-	public String getCachedName() {
+	public String getCachedAlias() {
 		return userInfo.getName();
+	}
+	
+	public String getCachedName() {
+		return secretOAuth.getId().getToken();
 	}
 
 	public String getCachedImage() {
@@ -120,9 +124,15 @@ public abstract class SNBase {
 		secrets.save(userInfo);
 	}
 	
+	public boolean hasCachedInfo() {
+		return secretOAuth.getId().getToken().length() > 0 && userInfo.getToken().length() > 0;
+	}
+	
 	public boolean hasConsumerKeyPair() {
 		return consumerKey.length() > 0 && consumerKeySecret.length() > 0;
 	}
+	
+	public abstract String getUserAlias();
 	
 	public abstract String getUserName();
 	
@@ -142,4 +152,6 @@ public abstract class SNBase {
 	}
 	
 	public abstract void addPeopleInNetwork() throws Exception;
+
+	public abstract void createInstance();
 }

@@ -59,7 +59,8 @@ public class SNTwitter extends SNBase {
 		this.authenticated = false;
 		
 		secretOAuth = new SecretOAuth(SocialNetwork.TWITTER);
-		userInfo = new UserInfo(SocialNetwork.TWITTER);
+		userInfo = new UserInfo(SocialNetwork.TWITTER, SocialNetwork.INFORMATION_USER_PROFILE);
+		alias = new UserInfo(SocialNetwork.TWITTER, SocialNetwork.INFORMATION_USER_ALIAS);
 		
 		requestToken = null;
 		
@@ -100,20 +101,32 @@ public class SNTwitter extends SNBase {
 			        OAuthAuthorization auth = new OAuthAuthorization(conf);
 			        twitter = new TwitterFactory().getInstance(auth); 
 			        authenticated = true;
-					long sourceId = Integer.valueOf(secretOAuth.getId().getToken());
-					user = twitter.showUser(sourceId);
-					
-					secretOAuth.getId().setToken(user.getScreenName());
-					secrets.save(secretOAuth.getId());
-					
-					userInfo.setName(user.getName());
-					userProfileImageUrl = getUserAvatarUrl();
 				}
 			}
 			catch (Exception ex) {
 				authenticated = false;
 				twitter = null;
-				user = null;
+			}
+			
+			try {
+		        /*
+		         * it is better to use the id, because people would change their name
+		         */
+				long sourceId = Integer.valueOf(secretOAuth.getId().getToken());
+				user = twitter.showUser(sourceId);
+//		        user = twitter.showUser(userInfo.getName());
+				
+				secretOAuth.getId().setToken(String.valueOf(user.getId()));
+				secrets.save(secretOAuth.getId());
+				
+				userInfo.setName(user.getScreenName());
+				alias.setName(user.getName());
+				
+				saveUserInfo();
+				saveAlias();
+				userProfileImageUrl = getUserAvatarUrl();
+			}
+			catch (Exception ex) {
 			}
 		}
 	}
@@ -195,7 +208,7 @@ public class SNTwitter extends SNBase {
 
         AccessToken accessToken = t.getOAuthAccessToken(this.requestToken, verifier);
         
-        secretOAuth.getId().setToken(String.valueOf(accessToken.getScreenName()));
+        secretOAuth.getId().setToken(String.valueOf(accessToken.getUserId()));
         
         secretOAuth.getToken().setToken(accessToken.getToken());
         secretOAuth.getToken().setSecret(accessToken.getTokenSecret());
@@ -233,7 +246,7 @@ public class SNTwitter extends SNBase {
 	}
 	
 	public String getUserName() {
-		return user == null ? this.getCachedAlias() : user.getScreenName();
+		return user == null ? this.getCachedName() : user.getScreenName();
 	}
 	
 	public String getUserAvatarUrl() {
@@ -242,7 +255,7 @@ public class SNTwitter extends SNBase {
 
 	@Override
 	public String getUserAlias() {
-		return user == null ? this.getCachedName() : user.getName();
+		return user == null ? this.getCachedAlias() : user.getName();
 	}	
 	
 }

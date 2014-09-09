@@ -21,8 +21,8 @@ package au.com.tyo.sn;
  */
 public class UserInfo extends SecretBase {
 	
-	public UserInfo(int type) {
-		super(type, SocialNetworkConstants.INFORMATION_USER_PROFILE);
+	public UserInfo(int type, int subType) {
+		super(type, subType);
 	}
 
 	public String getName() {

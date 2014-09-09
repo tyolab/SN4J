@@ -70,6 +70,7 @@ public interface SocialNetworkConstants {
 	public static final int INFORMATION_OAUTH_ID = 1;
 	public static final int INFORMATION_OAUTH_ACCESS_TOKEN = 2;
 	public static final int INFORMATION_USER_PROFILE = 3;
+	public static final int INFORMATION_USER_ALIAS = 4;
 	
 	public static final int[] SUPPORTED_SOCIAL_NETWORKS = {
 																					TWITTER, 

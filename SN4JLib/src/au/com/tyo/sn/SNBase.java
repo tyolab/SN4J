@@ -33,6 +33,8 @@ public abstract class SNBase {
 	
 	protected UserInfo userInfo;
 	
+	protected UserInfo alias;
+	
 	protected String userProfileImageUrl;
 	
 	protected String consumerKey;
@@ -49,7 +51,8 @@ public abstract class SNBase {
 		setCallback(new Callback(getTypeString()));
 		
 		secretOAuth = new SecretOAuth(SocialNetwork.ANY);
-		userInfo = new UserInfo(SocialNetwork.ANY);
+		userInfo = new UserInfo(SocialNetwork.ANY, SocialNetwork.INFORMATION_USER_PROFILE);
+		alias = new UserInfo(SocialNetwork.ANY, SocialNetwork.INFORMATION_USER_ALIAS);
 		
 		consumerKey = "";
 		consumerKeySecret = "";
@@ -91,12 +94,22 @@ public abstract class SNBase {
 		this.callback = callback;
 	}
 
-	public String getCachedAlias() {
-		return userInfo.getName();
+	public String getCachedId() {
+		return secretOAuth.getId().getToken();
 	}
 	
+	/**
+	 * for Twitter, the alias is the name returned by twitter4j getName
+	 */
+	public String getCachedAlias() {
+		return alias.getName();
+	}
+	
+	/**
+	 * for Twitter, the name will be the screen name which can be used for logging in with a password
+	 */
 	public String getCachedName() {
-		return secretOAuth.getId().getToken();
+		return userInfo.getToken();
 	}
 
 	public String getCachedImage() {
@@ -122,6 +135,10 @@ public abstract class SNBase {
 	
 	public void saveUserInfo() {
 		secrets.save(userInfo);
+	}
+	
+	public void saveAlias() {
+		secrets.save(alias);
 	}
 	
 	public boolean hasCachedInfo() {
@@ -154,4 +171,19 @@ public abstract class SNBase {
 	public abstract void addPeopleInNetwork() throws Exception;
 
 	public abstract void createInstance();
+
+	public void logout() {
+		userInfo.setToken("");
+		userInfo.setSecret("");
+		alias.setToken("");
+		alias.setSecret("");
+		secretOAuth.getId().setToken("");
+		secretOAuth.getId().setSecret("");
+		secretOAuth.getToken().setToken("");
+		secretOAuth.getToken().setSecret("");
+		
+		saveAuthSecrets();
+		saveUserInfo();
+		saveAlias();
+	}
 }

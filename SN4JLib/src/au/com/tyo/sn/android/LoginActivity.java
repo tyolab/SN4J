@@ -93,8 +93,11 @@ public class LoginActivity extends Activity {
             try {
 				sn.retrieveAccessToken(uri);
 				
-				if (sn.hasSecret() && listener != null)
+				if (sn.hasSecret() && listener != null) {
+					sn.createInstance();
+					
 					listener.onAppAuthorized(type);
+				}
 			} catch (Exception e) {
 				e.printStackTrace();
 				Log.e(LOG_TAG, e.getLocalizedMessage() == null ? "Error in processing the twitter access token" : e.getLocalizedMessage());

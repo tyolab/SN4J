@@ -41,6 +41,10 @@ public abstract class SNBase {
 	
 	protected String consumerKeySecret;
 	
+	private SocialNetworkListener listener;
+	
+	protected boolean authenticated;
+	
 	public SNBase() {
 		this(SocialNetwork.ANY);
 	}
@@ -56,6 +60,9 @@ public abstract class SNBase {
 		
 		consumerKey = "";
 		consumerKeySecret = "";
+		listener = null;
+		
+		this.authenticated = false;
 	}
 	
 	public static void setAppId(String name) {
@@ -76,6 +83,10 @@ public abstract class SNBase {
 
 	public synchronized void setType(int type) {
 		this.type = type;
+	}
+	
+	public String getSocialNetworkName() {
+		return SocialNetwork.SOCIAL_NETWORKS.get(getType());
 	}
 
 	public Secrets getSecretSafe() {
@@ -155,6 +166,14 @@ public abstract class SNBase {
 	
 	public abstract String getUserAvatarUrl();
 
+	public SocialNetworkListener getListener() {
+		return listener;
+	}
+
+	public void setListener(SocialNetworkListener listener) {
+		this.listener = listener;
+	}
+
 	public abstract void retrieveAccessToken(Uri uri)
 			throws Exception;
 
@@ -185,5 +204,9 @@ public abstract class SNBase {
 		saveAuthSecrets();
 		saveUserInfo();
 		saveAlias();
+		
+		authenticated = false;
+		
+		if (listener != null) listener.onLogoutFinished(this.getType());
 	}
 }

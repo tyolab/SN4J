@@ -23,16 +23,19 @@ import android.content.Context;
 import android.content.DialogInterface;
 import au.com.tyo.sn.R;
 import au.com.tyo.sn.SNBase;
-import au.com.tyo.sn.SocialNetwork;
 
 public class Logout {
 	
-	public void popupWanningDialog(Context context, int type, final SNBase sn) {
+	public static void popupWanningDialog(Context context, final SNBase sn) {
 		Dialog dialog = null;
+		int iconId = Resources.getIconResourceId(sn.getType());
+		if (iconId == -1)
+			iconId = android.R.drawable.ic_dialog_alert;
+		
 		dialog = new AlertDialog.Builder(context)
-		.setIcon(android.R.drawable.ic_dialog_alert)
-		.setTitle(String.format("Loging out %s", SocialNetwork.SOCIAL_NETWORKS.get(type)))
-		.setMessage(R.string.logout_prompt)
+		.setIcon(iconId)
+		.setTitle(String.format("Loging out %s", sn.getSocialNetworkName()))
+		.setMessage(String.format(context.getResources().getString(R.string.logout_prompt), sn.getSocialNetworkName()))
 		.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener()
 		{
 		    public void onClick(DialogInterface dialog, int which) {

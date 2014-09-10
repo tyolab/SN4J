@@ -49,14 +49,10 @@ public class SNTwitter extends SNBase {
 
 	private RequestToken requestToken;
 	
-	private boolean authenticated;
-	
 	private User user;
 	
 	public SNTwitter() {
 		super(SocialNetwork.TWITTER);
-		
-		this.authenticated = false;
 		
 		secretOAuth = new SecretOAuth(SocialNetwork.TWITTER);
 		userInfo = new UserInfo(SocialNetwork.TWITTER, SocialNetwork.INFORMATION_USER_PROFILE);
@@ -67,14 +63,6 @@ public class SNTwitter extends SNBase {
 		user = null;
 		twitter = null;
 	}
-	
-//	public synchronized SecretOAuth getSecretId() {
-//		return secretId;
-//	}
-//
-//	public synchronized void setSecretId(SecretOAuth secretId) {
-//		this.secretId = secretId;
-//	}
 
 	public synchronized SecretOAuth getSecretToken() {
 		return secretOAuth;
@@ -87,7 +75,7 @@ public class SNTwitter extends SNBase {
 	public void createInstance() {
 		synchronized(this) {
 			try {	
-				if (twitter == null && !secretOAuth.getToken().isBlank()) {
+				if (hasSecret()) {
 					AccessToken accessToken = new AccessToken(secretOAuth.getToken().getToken(), 
 							secretOAuth.getToken().getSecret());
 					
@@ -141,9 +129,11 @@ public class SNTwitter extends SNBase {
 	}
 
 	public void getAppAuthorized(String consumerKey, String consumerKeySecret) throws TwitterException {
-		Twitter twitter = getTwitter();
-	    twitter.setOAuthConsumer(consumerKey, consumerKeySecret);
-	    requestToken = twitter.getOAuthRequestToken(getCallback().toString());
+		if (twitter == null) {
+			twitter = getTwitter();
+		    twitter.setOAuthConsumer(consumerKey, consumerKeySecret);
+		    requestToken = twitter.getOAuthRequestToken(getCallback().toString());
+		}
 	    
 	    openAuthorizationURL(requestToken.getAuthorizationURL());
 	}
@@ -258,4 +248,11 @@ public class SNTwitter extends SNBase {
 		return user == null ? this.getCachedAlias() : user.getName();
 	}	
 	
+	@Override
+	public void logout() {
+		super.logout();
+		
+		user = null;
+		twitter = null;
+	}
 }

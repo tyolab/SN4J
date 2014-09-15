@@ -129,11 +129,14 @@ public class SNTwitter extends SNBase {
 	}
 
 	public void getAppAuthorized(String consumerKey, String consumerKeySecret) throws TwitterException {
-		if (twitter == null) {
-			twitter = getTwitter();
+		twitter = getTwitter();
+		try {
 		    twitter.setOAuthConsumer(consumerKey, consumerKeySecret);
-		    requestToken = twitter.getOAuthRequestToken(getCallback().toString());
 		}
+		catch (Exception ex) {
+			// the consumerkey and consumerKeySecret may have been already set 
+		}
+	    requestToken = twitter.getOAuthRequestToken(getCallback().toString());
 	    
 	    openAuthorizationURL(requestToken.getAuthorizationURL());
 	}

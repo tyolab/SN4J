@@ -16,6 +16,8 @@
 
 package au.com.tyo.sn.twitter;
 
+import java.util.ArrayList;
+
 import au.com.tyo.sn.Status;
 
 public class Tweet implements Status {
@@ -40,6 +42,8 @@ public class Tweet implements Status {
 	
 	private boolean trimmed;
 	
+	private ArrayList<Long> mediaIds;
+	
 	static {
 		setSignature("");
 	}
@@ -50,6 +54,7 @@ public class Tweet implements Status {
 		trimmed = false;
 		prefix = "";
 		url = "";
+		mediaIds = new ArrayList<Long>();
 	}
 	
 	public Tweet(String text) {
@@ -183,5 +188,27 @@ public class Tweet implements Status {
 	
 	public String toTweet() {
 		return toString();
+	}
+
+	@Override
+	public void setMediaIds(long[] ids) {
+		for (long id : ids)
+			this.mediaIds.add(id);
+	}
+
+	@Override
+	public long[] getMediaIds() {
+		if (mediaIds.size() == 0)
+			return null;
+		
+		long[] ids = new long[mediaIds.size()];
+		for (int i = 0; i < ids.length; ++i)
+			ids[i] = mediaIds.get(i);
+ 		return ids;
+	}
+
+	@Override
+	public void setMediaId(long id) {
+		mediaIds.add(id);
 	}
 }

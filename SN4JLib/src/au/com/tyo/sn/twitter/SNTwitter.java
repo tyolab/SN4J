@@ -32,6 +32,7 @@ import twitter4j.StatusUpdate;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
+import twitter4j.UploadedMedia;
 import twitter4j.User;
 import twitter4j.auth.AccessToken;
 import twitter4j.auth.OAuthAuthorization;
@@ -151,29 +152,59 @@ public class SNTwitter extends SNBase {
 		throw new UnsupportedOperationException("Override and implement this method (openAuthorizationURL()) are needed");
 	}
 
-	public Status postTweet(String tweet) throws TwitterException {
-		return twitter.updateStatus(tweet);
+//	public Status postTweet(String tweet) throws TwitterException {
+//		return twitter.updateStatus(tweet);
+//	}
+//	
+//	public Status postTweet(String tweet, String url) throws TwitterException {
+//		return twitter.updateStatus(tweet);
+//	}
+	public Status postTweet(Tweet tweet) throws TwitterException  {
+		return postTweet(tweet, (String[]) null);
 	}
 	
-	public Status postTweet(String tweet, String url) throws TwitterException {
-		return twitter.updateStatus(tweet);
+	public Status postTweet(Tweet tweet, String mediaUrl) throws TwitterException  {
+		return postTweet(tweet, mediaUrl != null ? new String[] {mediaUrl} : (String[]) null);
 	}
 	
-	public Status postTweetWithImage(String imgTitle, String imgUrl, String message) throws TwitterException  {
-        StatusUpdate what = new StatusUpdate(message);
+	public Status postTweet(Tweet tweet, String[] mediaUrls) throws TwitterException  {
+        StatusUpdate what = new StatusUpdate(tweet.getText());
         
-        try {
-	        URL url = new URL(imgUrl);
-	        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-	        connection.setDoOutput(true);
-	        InputStream is = url.openStream();
-	        what.setMedia(imgTitle, is);
-        }
-        catch (Exception ex) {
-        	/*
-        	 * Something wrong, but that is ok, just ignore it
-        	 */
-        }
+        if (null == tweet.getMediaIds() && null != mediaUrls && mediaUrls.length > 0) {
+	        for (int i = 0; i < 4 && i < mediaUrls.length; ++i) {
+		        UploadedMedia media = null;
+		        String imgUrl = mediaUrls[i];
+		        Uri uri = Uri.parse(imgUrl);
+		        String imgTitle = uri.getLastPathSegment();
+		        try {
+			        URL url = new URL(imgUrl);
+			        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+			        connection.setDoOutput(true);
+			        InputStream is = url.openStream();
+			        
+			        /*
+			         * can't do it, it is deprecated
+			         */
+			        //what.setMedia(imgTitle, is);
+			        media = twitter.uploadMedia(imgTitle, is);
+		        }
+		        catch (Exception ex) {
+		        	/*
+		        	 * Something wrong, but that is ok, just ignore it
+		        	 */
+		        	ex.printStackTrace();
+		        }
+		        finally {
+		        	if (null != media) {
+		        		tweet.setMediaId(media.getMediaId());
+		        	}
+		        }
+	        }
+	        
+	    }
+        
+        if (null != mediaUrls)
+        	what.setMediaIds(tweet.getMediaIds());
   
         return twitter.updateStatus(what);
 	}
@@ -212,12 +243,8 @@ public class SNTwitter extends SNBase {
 
 	@Override
 	public void postStatus(Message msg) throws Exception {
-		if (msg.getImageUrl() != null && msg.getImageUrl().length() > 0)
-			this.postTweetWithImage(msg.getTitle(), msg.getImageUrl(), msg.getText());
-		else if (msg.getUrl() != null && msg.getUrl().length() > 0)
-			this.postTweet(msg.getText(), msg.getUrl());
-		else
-			this.postTweet(msg.getText());
+		Tweet tweet = (Tweet) msg.getStatus();
+		postTweet(tweet, msg.getImageUrl());
 	}
 	
 	@Override

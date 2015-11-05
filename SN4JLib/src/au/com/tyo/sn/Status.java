@@ -21,5 +21,20 @@ public interface Status {
 	String getText();
 
 	void shrinkToFit(int i);
+	
+	/**
+	 * Twitter specific
+	 * 
+	 * @param ids
+	 */
+	void setMediaIds(long[] ids);
+	
+	/**
+	 * Twitter specific
+	 * 
+	 * @return
+	 */
+	long[] getMediaIds();
 
+	void setMediaId(long id);
 }

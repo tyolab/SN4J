@@ -193,9 +193,13 @@ public class SocialNetworkService extends Service {
 					if (ex instanceof TwitterException) {
 						TwitterException te = (TwitterException) ex;
 						resultCode = te.getErrorCode();
-						if (resultCode == 186)  // over limit
+						if (resultCode == 186) { // over limit
 							msg.getStatus().shrinkToFit(Tweet.CHARACTER_NUMBER_TO_REMOVE);
+						}
 						else {
+							/*
+							 * normally, image is the problem for failing updating status
+							 */
 							if (msg.getImageUrl() != null) 
 								msg.removeImageUrl();
 							resultCode = 0;

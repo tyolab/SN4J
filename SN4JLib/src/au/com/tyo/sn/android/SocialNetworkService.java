@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 TYONLINE TECHNOLOGY PTY. LTD.
+ * Copyright (C) 2015 TYONLINE TECHNOLOGY PTY. LTD.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,12 +47,14 @@ public class SocialNetworkService extends Service {
     private LinkedList<Message> queue;
     
     private boolean keepItRunning;
-    
-    private SocialNetwork sn;
+
+	private SocialNetwork sn;
 	
 	private OnShareToSocialNetworkListener listener;
 	
 	private boolean hasNetwork;
+	
+	private Thread messageHandlingTask;
 
 	public class SocialNetworkBinder extends Binder {
         public SocialNetworkService getService() {
@@ -79,6 +81,17 @@ public class SocialNetworkService extends Service {
 		synchronized (this) {
 			queue.offer(msg);
 		}
+		
+		if (sn.getSocialNetwork(msg.getSocialNetworkToShare()).isAuthenticated())
+			startMessageHandlingTask();
+	}
+	
+    public synchronized boolean isKeepItRunning() {
+		return keepItRunning;
+	}
+
+	public synchronized void setKeepItRunning(boolean keepItRunning) {
+		this.keepItRunning = keepItRunning;
 	}
 	
     @Override
@@ -94,10 +107,15 @@ public class SocialNetworkService extends Service {
 		sn = SocialNetwork.getInstance();
 		
 		hasNetwork = true; //assuming has it
-		
-//		new  MessageHandlingTask().execute();
-		new Thread(new MessageHandlingTask()).start();
 	}
+    
+    public void startMessageHandlingTask() {
+    	if (messageHandlingTask == null)
+    		messageHandlingTask = new Thread(new MessageHandlingTask());
+    	
+    	if (!messageHandlingTask.isAlive())
+    		messageHandlingTask.start();
+    }
 	
 	public void setOnShareToSocialNetworkListener(OnShareToSocialNetworkListener listener) {
 		this.listener = listener;
@@ -150,7 +168,6 @@ public class SocialNetworkService extends Service {
 	}
 		
 	private class MessageSharingTask extends AsyncTask<Message, Void, Void> {
-		
 
 		@Override
 		protected void onPreExecute() {
@@ -213,5 +230,9 @@ public class SocialNetworkService extends Service {
 	
 	public void onNetworkOffline() {
 		hasNetwork = false;
+	}
+	
+	public int getQueueSize() {
+		return queue.size();
 	}
 }

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+<target name="-pre-compile">
+    <path id="project.all.jars.path">
+    <path path="${toString:project.all.jars.path}"/>
+    <fileset dir="${jar.libs.dir}">
+        <include name="*.jar"/>
+    </fileset>
+    </path>
+</target>
+ -->
+<project name="custom_libs">
+	<target name="-pre-compile">
+	    <property name="project.all.jars.path.temp" value="${toString:project.all.jars.path}" />
+	    <path id="project.all.jars.path">
+	        <path path="${project.all.jars.path.temp}"/>
+	        <fileset dir="${jar.libs.dir}">
+	            <include name="*.jar"/>
+	        </fileset>
+	    </path>
+	</target>
+</project>

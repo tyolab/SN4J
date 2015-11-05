@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 TYONLINE TECHNOLOGY PTY. LTD.
+ * Copyright (C) 2015 TYONLINE TECHNOLOGY PTY. LTD.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -129,7 +129,7 @@ public class SNTwitter extends SNBase {
 	}
 
 	public void getAppAuthorized(String consumerKey, String consumerKeySecret) throws TwitterException {
-		twitter = getTwitter();
+		twitter = TwitterFactory.getSingleton();
 		try {
 		    twitter.setOAuthConsumer(consumerKey, consumerKeySecret);
 		}
